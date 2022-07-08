@@ -1002,11 +1002,11 @@ do
                     local icon = Instance.new('ImageLabel') do 
                         icon.BackgroundTransparency = 1
                         icon.BorderSizePixel = 0
-                        --icon.Image = 'rbxassetid://9651932657'
+                        icon.Image = 'rbxassetid://10152328589'
                         icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                         icon.ImageTransparency = 0
                         icon.Name = '#icon'
-                        icon.Position = UDim2.fromOffset(2, 2)
+                        icon.Position = UDim2.fromOffset(2, 1)
                         icon.Size = UDim2.fromOffset(22, 22)
                         icon.Visible = true
                         icon.ZIndex = 51
@@ -7663,12 +7663,12 @@ do
         if (typeof(s_winSize) == 'Vector2') then
             s_winSize = UDim2.fromOffset(s_winSize.X, s_winSize.Y) 
         end
-        local s_icon = settings.icon or window.icon
+        local s_icon = settings.icon
 
-        
-        
+        if (s_icon) then
+            window:setIcon(s_icon) 
+        end
         window:setPosition(s_position)
-        window:setIcon(s_icon)
         window:setTitle(s_title)
         
         window.size = s_winSize
