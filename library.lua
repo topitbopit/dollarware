@@ -1,12 +1,15 @@
--- j ui lib for dollarware (ofciousals mane) 🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑🤑
--- "Make money by using our UI Library"
--- 5/18/22
+-- DOLLARWARE UI LIBRARY
+-- MADE BY TOPIT
 
-local income = 10000 -- money gotten from using dollarwerwar
+-- warning: comments are mostly retarded / useless
+-- some shit makes no sense but idc enough to fix it
+
+-- started on 5/18/22
 
 local inputService = game:GetService('UserInputService')
 local renderService = game:GetService('RunService')
 local tweenService = game:GetService('TweenService')
+local guiService = game:GetService('GuiService')
 
 -- tween(object, {Property = 'value'}, 0.2, 1)
 local tween
@@ -26,49 +29,261 @@ do
     end
 end
 
+-- ui config shit
 local args = {...}
 local theme
 local rounding
-if (#args > 0 and typeof(args[1]) == 'table') then
-    local settings = args[1]
-    theme = settings.theme or theme
-    rounding = settings.rounding
+local animSpeed = 1e-12
+
+-- theme 
+do
+    if (#args > 0 and typeof(args[1]) == 'table') then
+        local settings = args[1]
+        theme = settings.theme
+        rounding = settings.rounding
+        if (settings.smoothDragging == nil) then 
+            settings.smoothDragging = true 
+        end
+        animSpeed = settings.smoothDragging and 1e-12 or 0
+        if (typeof(theme) == 'string') then
+            if (theme == 'cherry') then          -- red
+                theme = {
+                    Primary = Color3.fromRGB(249, 22, 52);
+                    Secondary = Color3.fromRGB(247, 22, 149);
+                    
+                    Window1 = Color3.fromRGB(11, 11, 11);
+                    Window2 = Color3.fromRGB(5, 5, 5);
+                    Window3 = Color3.fromRGB(8, 8, 8);
+                    
+                    Button1 = Color3.fromRGB(12, 12, 12);
+                    Button2 = Color3.fromRGB(15, 15, 15);
+                    Button3 = Color3.fromRGB(21, 21, 21);
+                    Button4 = Color3.fromRGB(24, 24, 24);
+                    
+                    Stroke = Color3.fromRGB(30, 30, 30);
+                    StrokeHover = Color3.fromRGB(83, 23, 31);
+                    
+                    Inset1 = Color3.fromRGB(3, 3, 3);
+                    Inset2 = Color3.fromRGB(1, 1, 1);
+                    Inset3 = Color3.fromRGB(2, 2, 2);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(164, 164, 164);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(200, 200, 200);
+                }
+            elseif (theme == 'orange') then      -- orange
+                theme = {
+                    Primary = Color3.fromRGB(244, 148, 22);
+                    Secondary = Color3.fromRGB(247, 37, 22);
+                    
+                    Window1 = Color3.fromRGB(20, 20, 22);
+                    Window2 = Color3.fromRGB(10, 10, 12);
+                    Window3 = Color3.fromRGB(15, 15, 17);
+                    
+                    Button1 = Color3.fromRGB(18, 18, 20);
+                    Button2 = Color3.fromRGB(20, 20, 22);
+                    Button3 = Color3.fromRGB(28, 28, 30);
+                    Button4 = Color3.fromRGB(30, 30, 32);
+                    
+                    Stroke = Color3.fromRGB(60, 60, 60);
+                    StrokeHover = Color3.fromRGB(110, 110, 110);
+                    
+                    Inset1 = Color3.fromRGB(10, 10, 12);
+                    Inset2 = Color3.fromRGB(0, 0, 2);
+                    Inset3 = Color3.fromRGB(5, 5, 7);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(192, 192, 192);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'lemon') then       -- yellow
+                theme = {
+                    Primary = Color3.fromRGB(220, 255, 66);
+                    Secondary = Color3.fromRGB(232, 173, 25);
+                    
+                    Window1 = Color3.fromRGB(30, 30, 30);
+                    Window2 = Color3.fromRGB(20, 20, 20);
+                    Window3 = Color3.fromRGB(25, 25, 25);
+                    
+                    Button1 = Color3.fromRGB(35, 35, 35);
+                    Button2 = Color3.fromRGB(40, 40, 40);
+                    Button3 = Color3.fromRGB(50, 50, 50);
+                    Button4 = Color3.fromRGB(55, 55, 55);
+                    
+                    Stroke = Color3.fromRGB(55, 55, 55);
+                    StrokeHover = Color3.fromRGB(80, 80, 80);
+                    
+                    Inset1 = Color3.fromRGB(18, 18, 18);
+                    Inset2 = Color3.fromRGB(8, 8, 8);
+                    Inset3 = Color3.fromRGB(13, 13, 13);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(192, 192, 192);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'lime') then        -- green
+                theme = {
+                    Primary = Color3.fromRGB(33, 255, 120);
+                    Secondary = Color3.fromRGB(120, 255, 33);
+                    
+                    Window1 = Color3.fromRGB(30, 30, 32);
+                    Window2 = Color3.fromRGB(24, 24, 26);
+                    Window3 = Color3.fromRGB(28, 28, 30);
+                    
+                    Button1 = Color3.fromRGB(36, 36, 38);
+                    Button2 = Color3.fromRGB(40, 40, 42);
+                    Button3 = Color3.fromRGB(46, 46, 48);
+                    Button4 = Color3.fromRGB(50, 50, 52);
+                    
+                    Stroke = Color3.fromRGB(60, 60, 60);
+                    StrokeHover = Color3.fromRGB(110, 110, 110);
+                    
+                    Inset1 = Color3.fromRGB(20, 20, 22);
+                    Inset2 = Color3.fromRGB(14, 14, 16);
+                    Inset3 = Color3.fromRGB(18, 18, 20);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(192, 192, 192);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'raspberry') then   -- cyan
+                theme = {
+                    Primary = Color3.fromRGB(0, 190, 255);
+                    Secondary = Color3.fromRGB(0, 255, 190);
+                    
+                    Window1 = Color3.fromRGB(25, 25, 27);
+                    Window2 = Color3.fromRGB(19, 19, 21);
+                    Window3 = Color3.fromRGB(23, 23, 25);
+                    
+                    Button1 = Color3.fromRGB(24, 24, 26);
+                    Button2 = Color3.fromRGB(28, 28, 30);
+                    Button3 = Color3.fromRGB(34, 40, 42);
+                    Button4 = Color3.fromRGB(38, 44, 46);
+                    
+                    Stroke = Color3.fromRGB(60, 60, 60);
+                    StrokeHover = Color3.fromRGB(110, 110, 110);
+                    
+                    Inset1 = Color3.fromRGB(20, 20, 22);
+                    Inset2 = Color3.fromRGB(14, 14, 16);
+                    Inset3 = Color3.fromRGB(18, 18, 20);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(192, 192, 192);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'blueberry') then   -- blue
+                theme = {
+                    Primary = Color3.fromRGB(91, 77, 249);
+                    Secondary = Color3.fromRGB(130, 76, 247);
+                    
+                    Window1 = Color3.fromRGB(20, 20, 23);
+                    Window2 = Color3.fromRGB(12, 12, 15);
+                    Window3 = Color3.fromRGB(15, 15, 18);
+                    
+                    Button1 = Color3.fromRGB(18, 18, 21);
+                    Button2 = Color3.fromRGB(21, 21, 24);
+                    Button3 = Color3.fromRGB(38, 38, 41);
+                    Button4 = Color3.fromRGB(41, 41, 44);
+                    
+                    Stroke = Color3.fromRGB(50, 50, 53);
+                    StrokeHover = Color3.fromRGB(60, 60, 63);
+                    
+                    Inset1 = Color3.fromRGB(15, 15, 18);
+                    Inset2 = Color3.fromRGB(7, 7, 10);
+                    Inset3 = Color3.fromRGB(13, 13, 16);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(168, 168, 168);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'grape') then       -- purple
+                
+                theme = {
+                    Primary = Color3.fromRGB(134, 53, 255);
+                    Secondary = Color3.fromRGB(211, 53, 255);
+                    
+                    Window1 = Color3.fromRGB(20, 20, 20);
+                    Window2 = Color3.fromRGB(10, 10, 10);
+                    Window3 = Color3.fromRGB(15, 15, 15);
+                    
+                    Button1 = Color3.fromRGB(15, 15, 15);
+                    Button2 = Color3.fromRGB(20, 20, 20);
+                    Button3 = Color3.fromRGB(35, 35, 35);
+                    Button4 = Color3.fromRGB(40, 40, 40);
+                    
+                    Stroke = Color3.fromRGB(34, 34, 34);
+                    StrokeHover = Color3.fromRGB(89, 49, 150);
+                    
+                    Inset1 = Color3.fromRGB(5, 5, 5);
+                    Inset2 = Color3.fromRGB(0, 0, 0);
+                    Inset3 = Color3.fromRGB(3, 3, 3);
+                    
+                    TextPrimary = Color3.fromRGB(255, 255, 255);
+                    TextStroke = Color3.fromRGB(0, 0, 0);
+                    TextDim = Color3.fromRGB(74, 42, 122);
+                    
+                    ControlGradient1 = Color3.fromRGB(255, 255, 255);
+                    ControlGradient2 = Color3.fromRGB(192, 192, 192);
+                }
+            elseif (theme == 'watermelon') then  -- legacy red-aqua
+                theme = nil
+            end
+        end
+    end
+    
+    
+    
     if (rounding == nil) then
         rounding = true 
     end
-else
-    theme = {
-        Primary = Color3.fromRGB(38, 233, 195); -- primary accent
-        Secondary = Color3.fromRGB(233, 38, 115); -- secondary accent
-        
-        
-        Window1 = Color3.fromRGB(30, 30, 35); -- window headers (the tool bar w/ title and min/max buttons)
-        Window2 = Color3.fromRGB(20, 20, 25); -- window background
-        Window3 = Color3.fromRGB(25, 25, 30); -- sidebar, section header, tooltip header
-        
-        Button1 = Color3.fromRGB(35, 35, 40); -- idle disabled button
-        Button2 = Color3.fromRGB(45, 45, 50); -- disabled button focused
-        Button3 = Color3.fromRGB(65, 65, 70); -- idle enabled button
-        Button4 = Color3.fromRGB(75, 75, 80); -- enabled button focused
-        
-        Stroke = Color3.fromRGB(50, 50, 55); -- stroke for everything
-        
-        Inset1 = Color3.fromRGB(20, 20, 25); -- inner stroke of Window1
-        Inset2 = Color3.fromRGB(10, 10, 15); -- inner stroke of Window2
-        Inset3 = Color3.fromRGB(15, 15, 20); -- inner stroke of Window3
-        
-        
-        TextPrimary = Color3.fromRGB(255, 255, 255); -- primary text color
-        TextStroke = Color3.fromRGB(0, 0, 0); -- text stroke
-        TextDim = Color3.fromRGB(164, 164, 164); -- dim text color
-        
-        ControlGradient1 = Color3.fromRGB(255, 255, 255); -- top color for extra gradient effects
-        ControlGradient2 = Color3.fromRGB(192, 192, 192); -- bottom color for extra gradient effects
-    }
-    
-    rounding = true
+    if (typeof(theme) ~= 'table') then
+        theme = {
+            Primary = Color3.fromRGB(38, 233, 195); -- primary accent
+            Secondary = Color3.fromRGB(233, 38, 115); -- secondary accent
+            
+            Window1 = Color3.fromRGB(30, 30, 35); -- window headers (the tool bar w/ title and min/max buttons)
+            Window2 = Color3.fromRGB(20, 20, 25); -- window background
+            Window3 = Color3.fromRGB(25, 25, 30); -- sidebar, section header, tooltip header
+            
+            Button1 = Color3.fromRGB(35, 35, 40); -- idle disabled button
+            Button2 = Color3.fromRGB(45, 45, 50); -- disabled button focused
+            Button3 = Color3.fromRGB(65, 65, 70); -- idle enabled button
+            Button4 = Color3.fromRGB(75, 75, 80); -- enabled button focused
+            
+            Stroke = Color3.fromRGB(50, 50, 55); -- stroke for everything
+            StrokeHover = Color3.fromRGB(70, 70, 75); -- stroke for everything
+            
+            Inset1 = Color3.fromRGB(20, 20, 25); -- inner stroke of Window1
+            Inset2 = Color3.fromRGB(10, 10, 15); -- inner stroke of Window2
+            Inset3 = Color3.fromRGB(15, 15, 20); -- inner stroke of Window3
+            
+            TextPrimary = Color3.fromRGB(255, 255, 255); -- primary text color
+            TextStroke = Color3.fromRGB(0, 0, 0); -- text stroke
+            TextDim = Color3.fromRGB(164, 164, 164); -- dim text color
+            
+            ControlGradient1 = Color3.fromRGB(255, 255, 255); -- top color for extra gradient effects
+            ControlGradient2 = Color3.fromRGB(192, 192, 192); -- bottom color for extra gradient effects
+        }
+    end
 end
-
 
 
 -- screen gui 
@@ -286,11 +501,181 @@ local tooltip = {} do
     tooltip.update = nil
 end
 
+-- hint 
+local hint = {} do 
+    do
+        local instances = {}
+        
+        local main = Instance.new('Frame')
+        main.BackgroundColor3 = theme.Window2
+        main.BorderColor3 = theme.Inset2
+        main.BorderMode = 'Inset'
+        main.Name = '#main'
+        main.Size = UDim2.fromOffset(140, 84)
+        main.Visible = false
+        main.ZIndex = 3900
+        
+        main.Parent = uiScreen
+        
+        do 
+            local stroke = Instance.new('UIStroke') do 
+                stroke.ApplyStrokeMode = 'Border'
+                stroke.Color = theme.Stroke
+                stroke.LineJoinMode = 'Round'
+                stroke.Thickness = 1 
+                stroke.Name = '#stroke'
+                
+                stroke.Parent = main
+            end
+            
+            local shadow = Instance.new('ImageLabel') do 
+                shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+                shadow.BackgroundTransparency = 1
+                shadow.BorderSizePixel = 0 
+                shadow.Image = 'rbxassetid://7331400934'
+                shadow.ImageColor3 = Color3.fromRGB(0, 0, 5)
+                shadow.Name = '#shadow'
+                shadow.Position = UDim2.fromScale(0.5, 0.5)
+                shadow.ScaleType = 'Slice'
+                shadow.Size = UDim2.new(1, 50, 1, 50)
+                shadow.SliceCenter = Rect.new(40, 40, 260, 260)
+                shadow.SliceScale = 1
+                shadow.ZIndex = 3899
+                
+                shadow.Parent = main
+            end
+            
+            local trim = Instance.new('Frame') do 
+                trim.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                trim.BackgroundTransparency = 0
+                trim.BorderSizePixel = 0 
+                trim.Name = '#trim'
+                trim.Position = UDim2.fromOffset(0, -2)
+                trim.Size = UDim2.new(1, 0, 0, 1)
+                trim.ZIndex = 3905
+                
+                trim.Parent = main
+                
+                local gradient = Instance.new('UIGradient') do 
+                    gradient.Color = ColorSequence.new(
+                        theme.Primary, 
+                        theme.Secondary
+                    )
+                    gradient.Enabled = true
+                    gradient.Name = '#gradient'
+                    gradient.Rotation = 0
+                    
+                    gradient.Parent = trim
+                end
+            end
+            
+            local menu = Instance.new('Frame') do 
+                menu.BackgroundColor3 = theme.Window2
+                menu.BorderColor3 = theme.Inset2
+                menu.BorderMode = 'Inset'
+                menu.BorderSizePixel = 1
+                menu.ClipsDescendants = true 
+                menu.Name = '#menu'
+                menu.Position = UDim2.fromOffset(0, 0)
+                menu.Size = UDim2.fromScale(1, 1)
+                menu.Visible = true
+                menu.ZIndex = 3901
+                 
+                menu.Parent = main
+                
+                do
+                    local selectionFrame = Instance.new('Frame') do 
+                        selectionFrame.BackgroundColor3 = theme.Button2
+                        selectionFrame.BorderSizePixel = 0
+                        selectionFrame.Name = '#select'
+                        selectionFrame.Size = UDim2.new(1, 0, 0, 16)
+                        selectionFrame.Visible = true
+                        selectionFrame.ZIndex = 3902
+                        
+                        selectionFrame.Parent = menu
+                        
+                        instances.optionHighlight = selectionFrame
+                    end
+                    
+                    local hintContainer = Instance.new('ScrollingFrame') do 
+                        hintContainer.AutomaticCanvasSize = 'Y'
+                        hintContainer.BackgroundTransparency = 1
+                        hintContainer.BorderSizePixel = 0
+                        hintContainer.Name = '#container'
+                        hintContainer.ScrollBarImageTransparency = 1
+                        hintContainer.ScrollingEnabled = false 
+                        hintContainer.Size = UDim2.fromScale(1, 1)
+                        hintContainer.Visible = true
+                        hintContainer.ZIndex = 3902
+                        
+                        hintContainer.Parent = menu
+                        
+                        do
+                            local layout = Instance.new('UIListLayout') do 
+                                layout.FillDirection = 'Vertical'
+                                layout.HorizontalAlignment = 'Left'
+                                layout.SortOrder = 'Name'
+                                layout.VerticalAlignment = 'Top'
+                                
+                                layout.Parent = hintContainer
+                            end
+                            
+                            local hintOption = Instance.new('TextLabel') do 
+                                hintOption.BackgroundTransparency = 1
+                                --hintOption.Font = 'SourceSansItalic'
+                                hintOption.Name = '#hint'
+                                hintOption.RichText = true
+                                hintOption.Size = UDim2.new(1, 0, 0, 16)
+                                hintOption.Text = 'no suggestions'
+                                hintOption.TextColor3 = theme.TextPrimary
+                                hintOption.TextSize = 14
+                                hintOption.TextStrokeColor3 = theme.TextStroke
+                                hintOption.TextStrokeTransparency = 0.8
+                                hintOption.TextWrapped = false
+                                hintOption.TextXAlignment = 'Left'
+                                hintOption.TextYAlignment = 'Center'
+                                hintOption.Visible = false
+                                hintOption.ZIndex = 3902
+                                
+                                hintOption.Parent = hintContainer
+                                
+                                local padding = Instance.new('UIPadding') do 
+                                    padding.Name = '#padding'
+                                    padding.PaddingLeft = UDim.new(0, 4)
+                                    padding.PaddingBottom = UDim.new(0, 2)
+                                    
+                                    padding.Parent = hintOption
+                                end
+                                
+                                instances.hintTemplate = hintOption
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        
+        
+        instances.main = main
+        hint.instances = instances
+    end
+    
+    hint.selection = 1
+    hint.handle = nil 
+    hint.hintCount = 0
+    hint.showing = false
+    hint.updateCn = nil
+    hint.inputCn = nil
+    hint.previousHint = ''
+    hint.hints = {}
+end
+
 
 local defaultWinPos = UDim2.fromScale(0.6, 0.6)
 
 local ui = {}
 
+-- classes
 local elemClasses = {} 
 do 
     -- GLOBAL
@@ -360,7 +745,6 @@ do
         end
         elemClasses.baseElement = baseElement
     end
-    
     -- WINDOW
     do
         -- init window class
@@ -368,10 +752,12 @@ do
             window.__index = window
             setmetatable(window, elemClasses.baseElement)
             
+            window.class = 'window'
+            
             
             window.minimized = false -- is minimized
             window.size = UDim2.fromOffset(450, 350) -- current win size
-            window.icon = 'rbxassetid://9651932657'
+            window.icon = nil--'rbxassetid://9651932657'
             window.minFocused = false
             
             local instances = {} do 
@@ -616,7 +1002,7 @@ do
                     local icon = Instance.new('ImageLabel') do 
                         icon.BackgroundTransparency = 1
                         icon.BorderSizePixel = 0
-                        icon.Image = 'rbxassetid://9651932657'
+                        --icon.Image = 'rbxassetid://9651932657'
                         icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                         icon.ImageTransparency = 0
                         icon.Name = '#icon'
@@ -626,9 +1012,6 @@ do
                         icon.ZIndex = 51
                         
                         icon.Parent = titleBar
-                        
-                        -- titlebar icon
-                        -- dont add a fade
                     end
                     
                     local title = Instance.new('TextLabel') do 
@@ -751,35 +1134,14 @@ do
                         
                         stroke.Parent = sideBar
                     end
-                    --[[
-                    local shadowTop = Instance.new('Frame') do 
-                        shadowTop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                        shadowTop.BackgroundTransparency = 0
-                        shadowTop.BorderSizePixel = 0 
-                        shadowTop.Name = '#shadow-top'
-                        shadowTop.Position = UDim2.fromOffset(0, 1)
-                        shadowTop.Size = UDim2.new(1, 0, 0, 5)
-                        shadowTop.Visible = true
-                        shadowTop.ZIndex = 51
-                        
-                        shadowTop.Parent = sideBar
-                        
-                        local gradient = Instance.new('UIGradient') do 
-                            gradient.Name = '#gradient'
-                            gradient.Rotation = 90
-                            gradient.Transparency = NumberSequence.new({
-                                NumberSequenceKeypoint.new(0, 0.75), 
-                                NumberSequenceKeypoint.new(1, 1)
-                            })
-                            
-                            gradient.Parent = shadowTop
-                        end
-                    end]]
+
                     
                     local menu = Instance.new('ScrollingFrame') do 
+                        menu.AutomaticCanvasSize = 'Y'
                         menu.BackgroundTransparency = 1
                         menu.BorderSizePixel = 0
                         menu.BottomImage = 'rbxassetid://9416839567'
+                        menu.CanvasSize = UDim2.fromOffset(0, 0)
                         menu.MidImage = 'rbxassetid://9416839567'
                         menu.Name = '#menu'
                         menu.Position = UDim2.fromOffset(1, 1)
@@ -816,12 +1178,14 @@ do
                 end
                 
                 -- resize handle
-                local resizeHandle = Instance.new('Frame') do 
+                local resizeHandle = Instance.new('ImageLabel') do 
                     resizeHandle.BackgroundTransparency = 1
+                    resizeHandle.Image = 'rbxassetid://9995727737'
+                    resizeHandle.ImageColor3 = theme.Primary
                     resizeHandle.Name = '#resize-handle'
                     resizeHandle.Position = UDim2.new(1, -10, 1, -10)
                     resizeHandle.Size = UDim2.fromOffset(10, 10)
-                    resizeHandle.ZIndex = 4
+                    resizeHandle.ZIndex = 34
                     
                     resizeHandle.Parent = mainFrame
                 end
@@ -832,10 +1196,12 @@ do
             window.signals = {
                 buttonClose = {
                     MouseEnter = function(self) 
-                        tween(self, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(self, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(self['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(self) 
-                        tween(self, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(self, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(self['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(_, self) 
                         self:destroy()
@@ -846,19 +1212,21 @@ do
                         w.minFocused = true
                         
                         if (w.minimized) then
-                            tween(self, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                            tween(self, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                         else
-                            tween(self, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            tween(self, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                         end
+                        tween(self['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(self, w) 
                         w.minFocused = false
                         
                         if (w.minimized) then
-                            tween(self, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                            tween(self, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                         else
-                            tween(self, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                            tween(self, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                         end
+                        tween(self['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(_, self) 
                         self:minimize()
@@ -870,26 +1238,31 @@ do
             
             window.destroy = function(self) 
                 
-                for _, menu in ipairs(self.menus) do 
-                    for _, section in ipairs(menu.sections) do 
-                        for _, control in ipairs(section.controls) do 
-                            if (control.color and control.instances.picker) then
-                                if (control.chromaCon) then 
-                                    control.chromaCon:Disconnect()
-                                end
-                                local pwin = control.pickerWindow
-                                if (pwin) then
-                                    if (pwin.chromaCon) then 
-                                        pwin.chromaCon:Disconnect()
+                if (ui.autoDisableToggles) then 
+                    for _, menu in ipairs(self.menus) do 
+                        for _, section in ipairs(menu.sections) do 
+                            for _, control in ipairs(section.controls) do 
+                                if (control.class == 'picker') then
+                                    if (control.chromaCon) then 
+                                        control.chromaCon:Disconnect()
                                     end
-                                    pwin:bindToEvent('close',nil)
-                                    pwin:destroy()
+                                    local pwin = control.pickerWindow
+                                    if (pwin) then
+                                        if (pwin.chromaCon) then 
+                                            pwin.chromaCon:Disconnect()
+                                        end
+                                        pwin:bindToEvent('close',nil)
+                                        pwin:destroy()
+                                    end
+                                elseif (control.class == 'toggle') then 
+                                    if (control.toggled) then
+                                        control:disable()
+                                    end
                                 end
                             end
                         end
                     end
                 end
-                
                 local mainFrame = self.instances.mainFrame
                 task.spawn(function()
                     --tween(mainFrame, {Position = UDim2.new(0, mainFrame.AbsolutePosition.X, 1, mainFrame.AbsoluteSize.Y)}, 1, 1)
@@ -910,6 +1283,7 @@ do
                             ImageLabel = {backgroundTransparency, imageTransparency},
                             TextButton = {backgroundTransparency, textTransparency},
                             TextLabel = {backgroundTransparency, textTransparency},
+                            TextBox = {backgroundTransparency, textTransparency},
                             ScrollingFrame = {backgroundTransparency, scrollBarImageTransparency},
                             UIStroke = {transparency},
                         }
@@ -966,9 +1340,6 @@ do
                 return self 
             end
             window.setIcon = function(self, newIcon) 
-                if (typeof(newIcon) ~= 'string') then
-                    return error('expected type string for argument #1', 2) 
-                end
                 self.instances.mainFrame['#title-bar']['#icon'].Image = newIcon
                 return self
             end
@@ -981,6 +1352,7 @@ do
                 end
                 self.instances.mainFrame.Position = newPosition
                 return self 
+                
             end
             window.setSize = function(self, size)
                 -- type coercion :money
@@ -993,6 +1365,14 @@ do
                 self.instances.mainFrame.Size = size
                 return self 
             end
+            
+            window.getPosition = function(self) 
+                return self.instances.mainFrame.Position
+            end
+            window.getSize = function(self, targetSize) 
+                return targetSize and self.size or self.instances.mainFrame.Size
+            end
+            
             window.new = function(self, resize) 
                 -- inherit some functions and stuff
                 local new = setmetatable({}, self)
@@ -1003,12 +1383,9 @@ do
                 local instances = {}
                 -- copy the main gui 
                 instances.mainFrame = self.instances.mainFrame:Clone()
-                -- this is incredibly scuffed but it's genuinely the easiest way i could think of
-                -- while still keeping the normal Clone method and not making my own custom clone
                 
-                -- now this is absolutely awful fucking code and should never be done
-                -- but this is also insanely easier than just making everything and remembering
-                -- what the shitty ass indicies should be
+                
+                -- scuffed
                 --[[
                 local idx = #ui.windows * 200
                 for i,v in ipairs(instances.mainFrame:GetDescendants()) do 
@@ -1017,9 +1394,8 @@ do
                     end
                 end]]
                 
-                -- get the titlebar so redundant indexing isnt done 
                 local titleBar = instances.mainFrame['#title-bar']
-                -- set some stuff
+                
                 instances.buttonClose = titleBar['#button-close']
                 instances.buttonMin = titleBar['#button-min']
                 instances.titleBar = titleBar
@@ -1056,7 +1432,7 @@ do
                             
                             targetPos = UDim2.fromOffset(rootPos.X, rootPos.Y)
                             aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - 1e-12^dt)-- 1 - 1e-12^dt)
+                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
                             end)
                             
                             dCon = inputService.InputChanged:Connect(function(io) 
@@ -1076,7 +1452,7 @@ do
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
-                            tween(mainFrame, {Position = targetPos}, 0.1, 1)
+                            tween(mainFrame, {Position = targetPos}, 0.2, 1)
                         end
                     end)
                 end
@@ -1090,8 +1466,7 @@ do
                     local targetSize
                     
                     resizeHandle.InputBegan:Connect(function(io) 
-                        if (new.minimized) then return end 
-                        if (io.UserInputType.Value == 0) then
+                        if (io.UserInputType.Value == 0 and not new.minimized) then
                             local rootSize = mainFrame.AbsoluteSize
                             local startPos = io.Position
                             
@@ -1099,7 +1474,7 @@ do
                             
                             targetSize = UDim2.fromOffset(rootSize.X, rootSize.Y)
                             aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Size = mainFrame.Size:lerp(targetSize, 1 - 1e-12^dt)-- 1 - 1e-12^dt)
+                                mainFrame.Size = mainFrame.Size:lerp(targetSize, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
                                 new.size = mainFrame.Size
                             end)
                             
@@ -1116,14 +1491,16 @@ do
                         end
                     end)
                     resizeHandle.InputEnded:Connect(function(io)
-                        if (io.UserInputType.Value == 0) then
+                        if (io.UserInputType.Value == 0 and not new.minimized) then
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
-                            tween(mainFrame, {Size = targetSize}, 0.1, 1)
+                            tween(mainFrame, {Size = targetSize}, 0.2, 1)
                             new.size = targetSize
                         end
                     end)
+                else
+                    instances.resizeHandle.Visible = false
                 end
                 -- finalize stuff
                 instances.mainFrame.Parent = uiScreen
@@ -1146,9 +1523,9 @@ do
                         ImageColor3 = theme.Primary
                     }, 0.3, 1)
                     if (self.minFocused) then
-                        tween(bmin, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                     else
-                        tween(bmin, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                     end
                     
                     mf['#page-region'].Visible = false
@@ -1162,9 +1539,9 @@ do
                     }, 0.3, 1)
                     
                     if (self.minFocused) then
-                        tween(bmin, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                     else
-                        tween(bmin, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                     end
                     
                     mf['#page-region'].Visible = true
@@ -1177,7 +1554,6 @@ do
         -- add the window class
         elemClasses.window = window
     end
-    
     -- PICKER WINDOW
     do 
         local function polarToCart(r, theta) 
@@ -1192,6 +1568,7 @@ do
             pickerWindow.__index = pickerWindow
             setmetatable(pickerWindow, elemClasses.baseElement)
             
+            pickerWindow.class = 'pickerWindow'
             
             pickerWindow.minimized = false -- is minimized
             pickerWindow.minFocused = false
@@ -1220,9 +1597,9 @@ do
                     
 
                     if (self.chromaFocused) then
-                        tween(chromaButton, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                        tween(chromaButton, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                     else
-                        tween(chromaButton, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(chromaButton, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                     end
                     tween(chromaButton['#icon'], {Rotation = 360}, 0.5, 1)
                     tween(self.instances.speedSlider, {Position = UDim2.new(0, 4, 1, -24)}, 0.5, 1)
@@ -1232,9 +1609,9 @@ do
                     
                 else
                     if (self.chromaFocused) then
-                        tween(chromaButton, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                        tween(chromaButton, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                     else
-                        tween(chromaButton, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(chromaButton, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                     end
                     tween(chromaButton['#icon'], {Rotation = 0}, 0.5, 1)
                     tween(self.instances.speedSlider, {Position = UDim2.new(0, -44, 1, -24)}, 0.5, 1)
@@ -2127,6 +2504,7 @@ do
                                     sliderFill.Active = false
                                     sliderFill.BackgroundColor3 = theme.Primary
                                     sliderFill.BackgroundTransparency = 0.6
+                                    sliderFill.BorderSizePixel = 0
                                     sliderFill.Name = '#slider-fill'
                                     sliderFill.Size = UDim2.fromScale(1, 1)
                                     sliderFill.Visible = true
@@ -2162,7 +2540,7 @@ do
                                     inputBox.ClipsDescendants = true
                                     inputBox.Font = 'SourceSans'
                                     inputBox.Name = '#input-box'
-                                    inputBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+                                    inputBox.PlaceholderColor3 = theme.TextDim
                                     inputBox.PlaceholderText = 'enter value'
                                     inputBox.Size = UDim2.fromScale(1, 1)
                                     inputBox.Text = 'enter value'
@@ -2193,6 +2571,13 @@ do
                                         stroke.Thickness = 1 
                                         
                                         stroke.Parent = inputBox
+                                    end
+                                    
+                                    local padding = Instance.new('UIPadding') do 
+                                        padding.PaddingLeft = UDim.new(0, 4)
+                                        padding.Name = '#padding'
+                                        
+                                        padding.Parent = inputBox
                                     end
                                 end
                             end
@@ -2291,6 +2676,7 @@ do
                                     sliderFill.Active = false
                                     sliderFill.BackgroundColor3 = theme.Primary
                                     sliderFill.BackgroundTransparency = 0.6
+                                    sliderFill.BorderSizePixel = 0
                                     sliderFill.Name = '#slider-fill'
                                     sliderFill.Size = UDim2.fromScale(1, 1)
                                     sliderFill.Visible = true
@@ -2327,7 +2713,7 @@ do
                                     inputBox.ClipsDescendants = true
                                     inputBox.Font = 'SourceSans'
                                     inputBox.Name = '#input-box'
-                                    inputBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+                                    inputBox.PlaceholderColor3 = theme.TextDim
                                     inputBox.PlaceholderText = 'enter value'
                                     inputBox.Size = UDim2.fromScale(1, 1)
                                     inputBox.Text = 'enter value'
@@ -2456,6 +2842,7 @@ do
                                     sliderFill.Active = false
                                     sliderFill.BackgroundColor3 = theme.Primary
                                     sliderFill.BackgroundTransparency = 0.6
+                                    sliderFill.BorderSizePixel = 0
                                     sliderFill.Name = '#slider-fill'
                                     sliderFill.Size = UDim2.fromScale(1, 1)
                                     sliderFill.Visible = true
@@ -2492,7 +2879,7 @@ do
                                     inputBox.ClipsDescendants = true
                                     inputBox.Font = 'SourceSans'
                                     inputBox.Name = '#input-box'
-                                    inputBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+                                    inputBox.PlaceholderColor3 = theme.TextDim
                                     inputBox.PlaceholderText = 'enter value'
                                     inputBox.Size = UDim2.fromScale(1, 1)
                                     inputBox.Text = 'enter value'
@@ -2588,10 +2975,12 @@ do
             pickerWindow.signals = {
                 buttonClose = {
                     MouseEnter = function(inst, win) 
-                        tween(inst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
-                        tween(inst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(inst, win) 
                         win:destroy()
@@ -2602,19 +2991,21 @@ do
                         win.minFocused = true
                         
                         if (win.minimized) then
-                            tween(inst, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                         else
-                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                         end
+                        tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
                         win.minFocused = false
                         
                         if (win.minimized) then
-                            tween(inst, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                         else
-                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                         end
+                        tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(_, self) 
                         self:minimize()
@@ -2622,45 +3013,59 @@ do
                 },
                 redSlider = {
                     MouseEnter = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 },
                 greenSlider = {
                     MouseEnter = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 },
                 blueSlider = {
                     MouseEnter = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
-                        tween(inst['#slider-container'], {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        local sliderCont = inst['#slider-container']
+                        tween(sliderCont, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(sliderCont['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 },
                 chromaButton = {
                     MouseEnter = function(inst, win) 
                         win.chromaFocused = true
                         if (win.chromaEnabled) then
-                            tween(inst, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                         else
-                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                         end
+                        tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
                         win.chromaFocused = false
                         
                         if (win.chromaEnabled) then
-                            tween(inst, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                         else
-                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
-                        end                    
+                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        end
+                        tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(inst, win) 
                         win:toggleChroma()
@@ -2813,7 +3218,7 @@ do
                             
                             targetPos = UDim2.fromOffset(rootPos.X, rootPos.Y)
                             aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - 1e-12^dt)-- 1 - 1e-12^dt)
+                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
                             end)
                             
                             dCon = inputService.InputChanged:Connect(function(io) 
@@ -2833,7 +3238,7 @@ do
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
-                            tween(mainFrame, {Position = targetPos}, 0.1, 1)
+                            tween(mainFrame, {Position = targetPos}, 0.2, 1)
                         end
                     end)
                 end
@@ -2931,7 +3336,7 @@ do
                             dcon:Disconnect()
                             acon:Disconnect()
                             
-                            tween(fill, {Size = targetSize}, 0.1, 1)
+                            tween(fill, {Size = targetSize}, 0.2, 1)
                         end
                     end)
                 end
@@ -3028,7 +3433,7 @@ do
                             dcon:Disconnect()
                             acon:Disconnect()
                             
-                            tween(fill, {Size = targetSize}, 0.1, 1)
+                            tween(fill, {Size = targetSize}, 0.2, 1)
                         end
                     end)
                 end
@@ -3125,7 +3530,7 @@ do
                             dcon:Disconnect()
                             acon:Disconnect()
                             
-                            tween(fill, {Size = targetSize}, 0.1, 1)
+                            tween(fill, {Size = targetSize}, 0.2, 1)
                         end
                     end)
                 end
@@ -3182,8 +3587,19 @@ do
                             acon:Disconnect()
                             
                             
-                            tween(cursor, {Position = targetPos}, 0.1, 1)
+                            tween(cursor, {Position = targetPos}, 0.2, 1)
                         end
+                    end)
+                    
+                    container.MouseEnter:Connect(function() 
+                        tween(container['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                        tween(container['#value-gradient']['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                        tween(cursor['#stroke'], {Color = theme.Primary}, 0.2, 1)
+                    end)
+                    container.MouseLeave:Connect(function() 
+                        tween(container['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                        tween(container['#value-gradient']['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                        tween(cursor['#stroke'], {Color = Color3.fromRGB(255, 255, 255)}, 0.2, 1)
                     end)
                 end
                 
@@ -3237,8 +3653,19 @@ do
                             acon:Disconnect()
                             
                             
-                            tween(cursor, {Position = targetPos}, 0.1, 1)
+                            tween(cursor, {Position = targetPos}, 0.2, 1)
                         end
+                    end)
+                    
+                    container.MouseEnter:Connect(function() 
+                        tween(container['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                        tween(container['#speed-gradient']['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                        tween(cursor['#stroke'], {Color = theme.Primary}, 0.2, 1)
+                    end)
+                    container.MouseLeave:Connect(function() 
+                        tween(container['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                        tween(container['#speed-gradient']['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                        tween(cursor['#stroke'], {Color = Color3.fromRGB(255, 255, 255)}, 0.2, 1)
                     end)
                 end
                 
@@ -3339,7 +3766,7 @@ do
                             dcon:Disconnect()
                             acon:Disconnect()
                             
-                            tween(cursor, {Position = targetPos}, 0.1, 1)
+                            tween(cursor, {Position = targetPos}, 0.2, 1)
                         end
                     end)
                 end
@@ -3366,9 +3793,9 @@ do
                         ImageColor3 = theme.Primary
                     }, 0.3, 1)
                     if (self.minFocused) then
-                        tween(bmin, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                     else
-                        tween(bmin, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                     end
                     
                     mf['#region'].Visible = false
@@ -3381,9 +3808,9 @@ do
                     }, 0.3, 1)
                     
                     if (self.minFocused) then
-                        tween(bmin, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                     else
-                        tween(bmin, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(bmin, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                     end
                     
                     mf['#region'].Visible = true
@@ -3394,7 +3821,6 @@ do
         -- add the window class
         elemClasses.pickerWindow = pickerWindow
     end
-    
     -- MENU
     do 
         -- init menu class
@@ -3402,6 +3828,7 @@ do
             menu.__index = menu
             setmetatable(menu, elemClasses.baseElement)
             
+            menu.class = 'menu'
             
             menu.selectorFocused = false
             menu.selected = false
@@ -3541,12 +3968,12 @@ do
                     tween(self.instances.pageSelector, {
                         BackgroundColor3 = theme.Button4,
                         TextColor3 = theme.Primary
-                    }, 0.1, 1)
+                    }, 0.2, 1)
                 else
                     tween(self.instances.pageSelector, {
                         BackgroundColor3 = theme.Button3,
                         TextColor3 = theme.Primary
-                    }, 0.1, 1)
+                    }, 0.2, 1)
                 end
                 
             end
@@ -3560,12 +3987,12 @@ do
                     tween(self.instances.pageSelector, {
                         BackgroundColor3 = theme.Button2,
                         TextColor3 = theme.TextPrimary
-                    }, 0.1, 1)
+                    }, 0.2, 1)
                 else
                     tween(self.instances.pageSelector, {
                         BackgroundColor3 = theme.Button1,
                         TextColor3 = theme.TextPrimary
-                    }, 0.1, 1)
+                    }, 0.2, 1)
                 end
             end
             
@@ -3574,20 +4001,26 @@ do
                     MouseEnter = function(inst, self) 
                         self.selectorFocused = true
                         
+                        local pageSelector = self.instances.pageSelector
+                        
                         if (self.selected) then
-                            tween(self.instances.pageSelector, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                            tween(pageSelector, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                         else
-                            tween(self.instances.pageSelector, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            tween(pageSelector, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                         end
+                        tween(pageSelector['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, self) 
                         self.selectorFocused = false 
                         
+                        local pageSelector = self.instances.pageSelector
+                        
                         if (self.selected) then
-                            tween(self.instances.pageSelector, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                            tween(pageSelector, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                         else
-                            tween(self.instances.pageSelector, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                            tween(pageSelector, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                         end
+                        tween(pageSelector['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 }
             }
@@ -3659,14 +4092,16 @@ do
         -- add the menu class
         elemClasses.menu = menu
     end
-    
     -- SECTION
     do 
         local section = {} do 
             section.__index = section 
             setmetatable(section, elemClasses.baseElement)
             
+            section.class = 'section'
+            
             section.minimized = false
+            section.minFocused = false
             
             local instances = {} do 
                 local sectionFrame = Instance.new('Frame')
@@ -3869,18 +4304,24 @@ do
                 local newState = not self.minimized
                 local mf = self.instances.sectionFrame
                 
+                local min = mf['#title-bar']['#min']
+                
                 if (newState) then
-                    tween(mf['#title-bar']['#min']['#icon'], {
+                    tween(min['#icon'], {
                         Rotation = 0
-                        --ImageColor3 = Color3.fromRGB(255, 255, 255)
                     }, 0.3, 1)
                     mf['#menu'].Visible = false
                     mf.AutomaticSize = 'None'
                 else
-                    tween(mf['#title-bar']['#min']['#icon'], {
+                    tween(min['#icon'], {
                         Rotation = 180
-                        --ImageColor3 = theme.Primary
                     }, 0.3, 1)
+                    
+                    tween(min, {
+                        BackgroundColor3 = self.minFocused and theme.Button2 or theme.Button1
+                        --BackgroundColor3 = theme[self.minFocused and 'Button2' or 'Button1']
+                        --BackgroundColor3 = theme['Button' .. (self.minFocused and 2 or 1)]
+                    })
                     mf['#menu'].Visible = true
                     mf.AutomaticSize = 'Y'
                 end
@@ -3889,8 +4330,28 @@ do
             
             section.signals = {
                 minimizeButton = {
-                    mouseButton1Click = function(_, new)
-                        new:minimize()
+                    mouseButton1Click = function(instance, self)
+                        self:minimize()
+                    end,
+                    MouseEnter = function(instance, self) 
+                        self.minFocused = true
+                        
+                        if (self.minimized) then
+                            tween(instance, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                        else
+                            tween(instance, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        end
+                        tween(instance['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                    end,
+                    MouseLeave = function(instance, self) 
+                        self.minFocused = false 
+                        
+                        if (self.minimized) then
+                            tween(instance, {BackgroundColor3 = theme.Button3}, 0.2, 1)
+                        else
+                            tween(instance, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        end
+                        tween(instance['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 }
             }
@@ -3931,18 +4392,38 @@ do
                 end
                 
                 local s_text = settings.text or 'nil'
+                local s_side = settings.side or 'auto'
+                local s_min do 
+                    if (settings.showMinButton == nil) then
+                        s_min = true
+                    else
+                        s_min = settings.showMinButton
+                    end 
+                end
                 
                 local section = section:new()
                 section.menu = self
                 
                 table.insert(self.sections, section)
                 section.id = #self.sections
-                
                 section.instances.title.Text = s_text
-                if (section.id%2 == 0) then
-                    section.instances.sectionFrame.Parent = self.instances.rightRegion
-                else
-                    section.instances.sectionFrame.Parent = self.instances.leftRegion
+                
+                
+                do
+                    local sectionFrame = section.instances.sectionFrame
+                    if (s_side == 'auto') then 
+                        if (section.id%2 == 0) then
+                            sectionFrame.Parent = self.instances.rightRegion
+                        else
+                            sectionFrame.Parent = self.instances.leftRegion
+                        end
+                    else
+                        sectionFrame.Parent = self.instances[(s_side == 'left' and 'leftRegion' or 'rightRegion')]
+                    end
+                    
+                    if (not s_min) then
+                        section.instances.minimizeButton.Visible = false
+                    end
                 end
                 return section
             end
@@ -3950,13 +4431,14 @@ do
         -- add class
         elemClasses.section = section
     end
-    
     -- TOGGLE
     do 
         
         local toggle = {} do 
             toggle.__index = toggle 
             setmetatable(toggle, elemClasses.baseElement)
+            
+            toggle.class = 'toggle'
             
             do
                 local instances = {} do 
@@ -4074,6 +4556,7 @@ do
             toggle.toggle = function(self) 
                 
                 local newState = not self.toggled
+                self.toggled = newState
                 local toggle = self.instances.toggle
                 local icon = toggle['#icon']
                 
@@ -4087,9 +4570,9 @@ do
 
                     
                     if (self.focused) then
-                        tween(toggle, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                        tween(toggle, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                     else
-                        tween(toggle, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                        tween(toggle, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                     end
                     
                     self:fireEvent('onEnable')
@@ -4101,9 +4584,9 @@ do
                     }, 0.3, 1)
                     
                     if (self.focused) then
-                        tween(toggle, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        tween(toggle, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                     else
-                        tween(toggle, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        tween(toggle, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                     end
 
                     self:fireEvent('onDisable')
@@ -4111,7 +4594,6 @@ do
                 
                 
                 self:fireEvent('onToggle', newState)
-                self.toggled = newState
                 return self
             end
             
@@ -4130,11 +4612,11 @@ do
                 }, 0.3, 1)
                 
                 if (self.focused) then
-                    tween(toggle, {BackgroundColor3 = theme.Button4}, 0.1, 1)
-                    tween(toggle['#stroke'], {Color = theme.StrokeHover}, 0.1, 1)
+                    tween(toggle, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                    tween(toggle['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                 else
-                    tween(toggle, {BackgroundColor3 = theme.Button3}, 0.1, 1)
-                    tween(toggle['#stroke'], {Color = theme.Stroke}, 0.1, 1)
+                    tween(toggle, {BackgroundColor3 = theme.Button3}, 0.2, 1)
+                    tween(toggle['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                 end
                 
                 self:fireEvent('onEnable')
@@ -4157,16 +4639,21 @@ do
                 
                 
                 if (self.focused) then
-                    tween(toggle, {BackgroundColor3 = theme.Button2}, 0.1, 1)
-                    tween(toggle['#stroke'], {Color = theme.StrokeHover}, 0.1, 1)
+                    tween(toggle, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                    tween(toggle['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                 else
-                    tween(toggle, {BackgroundColor3 = theme.Button1}, 0.1, 1)
-                    tween(toggle['#stroke'], {Color = theme.Stroke}, 0.1, 1)
+                    tween(toggle, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                    tween(toggle['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                 end
                 
                 self:fireEvent('onDisable')
                 self:fireEvent('onToggle', false)
                 return self
+            end
+            
+            toggle.reset = function(self) 
+                self:toggle()
+                self:toggle()
             end
             
             toggle.signals = {
@@ -4178,11 +4665,11 @@ do
                         local togInst = toggle.instances.toggle
                         
                         if (toggle.toggled) then
-                            tween(togInst, {BackgroundColor3 = theme.Button4}, 0.1, 1)
+                            tween(togInst, {BackgroundColor3 = theme.Button4}, 0.2, 1)
                         else
-                            tween(togInst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            tween(togInst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                         end
-                        tween(togInst['#stroke'], {Color = theme.StrokeHover}, 0.1, 1)
+                        tween(togInst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, toggle) 
                         toggle.focused = false
@@ -4191,11 +4678,11 @@ do
                         
                         local togInst = toggle.instances.toggle
                         if (toggle.toggled) then
-                            tween(togInst, {BackgroundColor3 = theme.Button3}, 0.1, 1)
+                            tween(togInst, {BackgroundColor3 = theme.Button3}, 0.2, 1)
                         else
-                            tween(togInst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                            tween(togInst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                         end
-                        tween(togInst['#stroke'], {Color = theme.Stroke}, 0.1, 1)
+                        tween(togInst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(inst, toggle) 
                         toggle:toggle()
@@ -4231,7 +4718,7 @@ do
             toggle.isEnabled = toggle.getState
             toggle.getValue = toggle.getState
             
-            elemClasses.section.addToggle = function(self, settings) 
+            elemClasses.section.addToggle = function(self, settings, callback) 
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
@@ -4249,13 +4736,16 @@ do
                     toggle:enable()
                 end
                 toggle.instances.controlFrame.Parent = self.instances.controlMenu
+                
+                if (typeof(callback) == 'function') then
+                    toggle:bindToEvent('onToggle', callback) 
+                end
                 return toggle
             end
         end
         -- add class
         elemClasses.toggle = toggle
     end
-    
     -- BUTTONS
     do
         -- SMALL BUTTON
@@ -4264,6 +4754,8 @@ do
             local buttonSmall = {} do 
                 buttonSmall.__index = buttonSmall 
                 setmetatable(buttonSmall, elemClasses.baseElement)
+                
+                buttonSmall.class = 'buttonSmall'
                 
                 do
                     local instances = {} do 
@@ -4276,15 +4768,15 @@ do
                         
                         instances.controlFrame = controlFrame
 
-                        local backButton = Instance.new('TextButton') do 
-                            backButton.BackgroundTransparency = 1
-                            backButton.Name = '#back-button'
-                            backButton.Size = UDim2.fromScale(1, 1)
-                            backButton.Text = ''
-                            backButton.TextTransparency = 1
-                            backButton.ZIndex = 34
+                        local clickSensor = Instance.new('TextButton') do 
+                            clickSensor.BackgroundTransparency = 1
+                            clickSensor.Name = '#click-sensor'
+                            clickSensor.Size = UDim2.fromScale(1, 1)
+                            clickSensor.Text = ''
+                            clickSensor.TextTransparency = 1
+                            clickSensor.ZIndex = 34
                             
-                            backButton.Parent = controlFrame
+                            clickSensor.Parent = controlFrame
                             
                             local label = Instance.new('TextLabel') do 
                                 label.BackgroundTransparency = 1
@@ -4304,7 +4796,7 @@ do
                                 label.Visible = true
                                 label.ZIndex = 35
                                 
-                                label.Parent = backButton
+                                label.Parent = clickSensor
                                 
                                 local padding = Instance.new('UIPadding') do 
                                     padding.Name = '#padding'
@@ -4324,7 +4816,7 @@ do
                                 button.Visible = true
                                 button.ZIndex = 35
                                 
-                                button.Parent = backButton
+                                button.Parent = clickSensor
                                 
                                 local round = Instance.new('UICorner') do 
                                     round.CornerRadius = UDim.new(0, rounding and 2 or 0)
@@ -4397,18 +4889,22 @@ do
                 buttonSmall.__hotkeyFunc = buttonSmall.click
                 
                 buttonSmall.signals = {
-                    backButton = {
+                    clickSensor = {
                         MouseEnter = function(inst, button) 
                             button.focused = true
                             button:showTooltip()
 
-                            tween(button.instances.button, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                            local inst = button.instances.button
+                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                            tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                         end,
                         MouseLeave = function(inst, button) 
                             button.focused = false
                             button:hideTooltip()
                             
-                            tween(button.instances.button, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                            local inst = button.instances.button
+                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                            tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                         end,
                         MouseButton1Click = function(inst, button) 
                             button:click()
@@ -4423,9 +4919,9 @@ do
                     
                     local instances = {}
                     instances.controlFrame = self.instances.controlFrame:Clone()
-                    instances.backButton = instances.controlFrame['#back-button']
-                    instances.label = instances.backButton['#label']
-                    instances.button = instances.backButton['#button']
+                    instances.clickSensor = instances.controlFrame['#click-sensor']
+                    instances.label = instances.clickSensor['#label']
+                    instances.button = instances.clickSensor['#button']
                     
                     for i, signals in pairs(self.signals) do 
                         local inst = instances[i]
@@ -4451,6 +4947,8 @@ do
                 buttonLarge.__index = buttonLarge 
                 setmetatable(buttonLarge, elemClasses.baseElement)
                 
+                buttonLarge.class = 'buttonLarge'
+                
                 do
                     local instances = {} do 
                         local controlFrame = Instance.new('Frame')
@@ -4462,15 +4960,15 @@ do
                         
                         instances.controlFrame = controlFrame
 
-                        local backButton = Instance.new('TextButton') do 
-                            backButton.BackgroundTransparency = 1
-                            backButton.Name = '#back-button'
-                            backButton.Size = UDim2.fromScale(1, 1)
-                            backButton.Text = ''
-                            backButton.TextTransparency = 1
-                            backButton.ZIndex = 34
+                        local clickSensor = Instance.new('TextButton') do 
+                            clickSensor.BackgroundTransparency = 1
+                            clickSensor.Name = '#click-sensor'
+                            clickSensor.Size = UDim2.fromScale(1, 1)
+                            clickSensor.Text = ''
+                            clickSensor.TextTransparency = 1
+                            clickSensor.ZIndex = 34
                             
-                            backButton.Parent = controlFrame
+                            clickSensor.Parent = controlFrame
                             
                         
                             
@@ -4484,7 +4982,7 @@ do
                                 button.Visible = true
                                 button.ZIndex = 35
                                 
-                                button.Parent = backButton
+                                button.Parent = clickSensor
                                 
                                 local round = Instance.new('UICorner') do 
                                     round.CornerRadius = UDim.new(0, rounding and 2 or 0)
@@ -4530,6 +5028,8 @@ do
                 end
                 
                 buttonLarge.focused = false
+                
+                
                 buttonLarge.click = function(self) 
                     self:fireEvent('onClick')
                     
@@ -4551,22 +5051,22 @@ do
                 buttonLarge.__hotkeyFunc = buttonLarge.click
                 
                 buttonLarge.signals = {
-                    backButton = {
+                    clickSensor = {
                         MouseEnter = function(inst, button) 
                             button.focused = true
                             button:showTooltip()
                             
                             local inst = button.instances.button
-                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
-                            tween(inst['#stroke'], {BackgroundColor3 = theme.StrokeHover}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                            tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                         end,
                         MouseLeave = function(inst, button) 
                             button.focused = false
                             button:hideTooltip()
                             
                             local inst = button.instances.button
-                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
-                            tween(inst['#stroke'], {BackgroundColor3 = theme.Stroke}, 0.1, 1)
+                            tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                            tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                         end,
                         MouseButton1Click = function(inst, button) 
                             button:click()
@@ -4581,8 +5081,8 @@ do
                     
                     local instances = {}
                     instances.controlFrame = self.instances.controlFrame:Clone()
-                    instances.backButton = instances.controlFrame['#back-button']
-                    instances.button = instances.backButton['#button']
+                    instances.clickSensor = instances.controlFrame['#click-sensor']
+                    instances.button = instances.clickSensor['#button']
                     instances.label = instances.button['#label']
                     
                     for i, signals in pairs(self.signals) do 
@@ -4597,13 +5097,14 @@ do
                     new.instances = instances
                     return new
                 end
+                
             end
             -- add class
             elemClasses.buttonLarge = buttonLarge
         end
         
         -- button finalization
-        elemClasses.section.addButton = function(self, settings) 
+        elemClasses.section.addButton = function(self, settings, callback) 
             if (not typeof(settings) == 'table') then
                 return error('expected type table for settings', 2) 
             end
@@ -4632,10 +5133,13 @@ do
             
             new.instances.label.Text = s_title
             new.instances.controlFrame.Parent = self.instances.controlMenu
+            
+            if (typeof(callback) == 'function') then
+                new:bindToEvent('onClick', callback) 
+            end
             return new
         end
     end
-    
     -- LABEL
     do 
         local label = {} do 
@@ -4734,18 +5238,21 @@ do
         label.section = section
     end
     
-    
+    -- Unfinished
+    -- DROPDOWN OPTION
     --[[
-    -- DROPDOWN
     do 
-        local buttonLarge = {} do 
-            buttonLarge.__index = buttonLarge 
-            setmetatable(buttonLarge, elemClasses.baseElement)
+        local dropdownOption = {} do 
+            dropdownOption.__index = dropdownOption 
+            setmetatable(dropdownOption, elemClasses.baseElement)
+            
+            dropdownOption.class = 'dropdownOption'
             
             do
                 local instances = {} do 
                     local controlFrame = Instance.new('Frame')
-                    controlFrame.BackgroundTransparency = 1
+                    controlFrame.BackgroundTransparency = 0.8
+                    controlFrame.BackgroundColor3 = Color3.new(1, 0, 0)
                     controlFrame.Name = '#control'
                     controlFrame.Size = UDim2.new(1, 0, 0, 24)
                     controlFrame.Visible = true
@@ -4753,17 +5260,15 @@ do
                     
                     instances.controlFrame = controlFrame
                     
-                    local backButton = Instance.new('TextButton') do 
-                        backButton.BackgroundTransparency = 1
-                        backButton.Name = '#back-button'
-                        backButton.Size = UDim2.fromScale(1, 1)
-                        backButton.Text = ''
-                        backButton.TextTransparency = 1
-                        backButton.ZIndex = 34
+                    local clickSensor = Instance.new('TextButton') do 
+                        clickSensor.BackgroundTransparency = 1
+                        clickSensor.Name = '#click-sensor'
+                        clickSensor.Size = UDim2.fromScale(1, 1)
+                        clickSensor.Text = ''
+                        clickSensor.TextTransparency = 1
+                        clickSensor.ZIndex = 34
                         
-                        backButton.Parent = controlFrame
-                        
-                    
+                        clickSensor.Parent = controlFrame
                         
                         local button = Instance.new('Frame') do 
                             button.Active = true
@@ -4775,7 +5280,7 @@ do
                             button.Visible = true
                             button.ZIndex = 35
                             
-                            button.Parent = backButton
+                            button.Parent = clickSensor
                             
                             local round = Instance.new('UICorner') do 
                                 round.CornerRadius = UDim.new(0, rounding and 2 or 0)
@@ -4814,63 +5319,148 @@ do
                                 
                                 label.Parent = button
                             end
+                            
+                            local icon = Instance.new('ImageLabel') do 
+                                icon.AnchorPoint = Vector2.new(1, 0)
+                                icon.BackgroundTransparency = 1
+                                icon.Image = 'rbxassetid://9801473013'
+                                icon.ImageColor3 = theme.Secondary
+                                icon.Name = '#icon'
+                                icon.Position = UDim2.fromScale(1, 0)
+                                icon.Rotation = 0
+                                icon.Size = UDim2.fromOffset(16, 16)
+                                icon.Visible = true
+                                icon.ZIndex = 35
+                                
+                                icon.Parent = button
+                                
+                                local gradient = Instance.new('UIGradient') do 
+                                    gradient.Color = ColorSequence.new(
+                                        theme.ControlGradient1,
+                                        theme.ControlGradient2
+                                    )
+                                    gradient.Rotation = 90
+                                    gradient.Enabled = true
+                                    gradient.Name = '#gradient'
+                                    
+                                    gradient.Parent = icon
+                                end
+                            end
+                        end
+                        
+                        
+                        local menu = Instance.new('ScrollingFrame') do 
+                            menu.BackgroundColor3 = theme.Window3
+                            menu.BorderSizePixel = 0
+                            menu.BottomImage = 'rbxassetid://9416839567'
+                            menu.ClipsDescendants = true
+                            menu.CanvasSize = UDim2.fromOffset(0, 0)
+                            menu.MidImage = 'rbxassetid://9416839567'
+                            menu.Name = '#menu'
+                            menu.Position = UDim2.fromOffset(3, 20)
+                            menu.ScrollBarImageTransparency = 0.9
+                            menu.ScrollBarThickness = 1
+                            menu.ScrollingDirection = 'Y'
+                            menu.ScrollingEnabled = true
+                            menu.Size = UDim2.new(1, -6, 0, 0)
+                            menu.TopImage = 'rbxassetid://9416839567'
+                            menu.ZIndex = 34
+                            
+                            menu.Parent = controlFrame
+                            
+                            local layout = Instance.new('UIListLayout') do 
+                                layout.Padding = UDim.new(0, 4)
+                                layout.Name = '#layout'
+                                layout.FillDirection = 'Vertical'
+                                layout.HorizontalAlignment = 'Center'
+                                layout.VerticalAlignment = 'Top'
+                                layout.SortOrder = 'LayoutOrder'
+                                
+                                layout.Parent = menu
+                            end
+                            
+                            local padding = Instance.new('UIPadding') do 
+                                padding.PaddingTop = UDim.new(0, 4)
+                                padding.Name = '#padding'
+                                padding.Parent = menu
+                            end
+                            
+                            local stroke = Instance.new('UIStroke') do 
+                                stroke.ApplyStrokeMode = 'Border'
+                                stroke.Color = theme.Stroke
+                                stroke.LineJoinMode = 'Round'
+                                stroke.Name = '#stroke'
+                                stroke.Thickness = 1 
+                                
+                                stroke.Parent = menu
+                            end
                         end
                     end
                 end
-                buttonLarge.instances = instances 
+                dropdownOption.instances = instances 
             end
             
-            buttonLarge.focused = false
-            buttonLarge.click = function(self) 
-                self:fireEvent('onClick')
-                
-                local button = self.instances.button
-                local label = button['#label']
-                
-                if (self.focused) then
-                    button.BackgroundColor3 = theme.Button4
-                    tween(button, {BackgroundColor3 = theme.Button2}, 1, 1)
+            dropdownOption.focused = false
+            dropdownOption.selected = false
+            
+            dropdownOption.select = function(self) 
+                self.openState = not self.openState
+                if (self.openState) then
+                    self:open()
                 else
-                    button.BackgroundColor3 = theme.Button3
-                    tween(button, {BackgroundColor3 = theme.Button1}, 1, 1)
+                    self:close()
                 end
-                label.TextColor3 = theme.Primary
-                tween(label, {TextColor3 = theme.TextPrimary}, 1, 1)
                 
                 return self
             end
-            buttonLarge.__hotkeyFunc = buttonLarge.click
+            dropdownOption.__hotkeyFunc = dropdownOption.select
             
-            buttonLarge.signals = {
-                backButton = {
-                    MouseEnter = function(inst, button) 
-                        button.focused = true
-                        button:showTooltip()
+            dropdownOption.signals = {
+                clickSensor = {
+                    MouseEnter = function(inst, self) 
+                        self.focused = true
+                        self:showTooltip()
                         
-                        tween(button.instances.button, {BackgroundColor3 = theme.Button2}, 0.1, 1)
-                    end,
-                    MouseLeave = function(inst, button) 
-                        button.focused = false
-                        button:hideTooltip()
                         
-                        tween(button.instances.button, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        local frame = self.instances.button
+                        if (self.openState) then
+                            tween(frame, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                        else
+                            tween(frame, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        end
+                        tween(frame['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
-                    MouseButton1Click = function(inst, button) 
-                        button:click()
+                    MouseLeave = function(inst, self) 
+                        self.focused = false
+                        self:hideTooltip()
+                        
+                        local frame = self.instances.button
+                        if (self.openState) then
+                            tween(frame, {BackgroundColor3 = theme.Button3}, 0.2, 1)
+                        else
+                            tween(frame, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        end
+                        tween(frame['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                    end,
+                    MouseButton1Click = function(inst, self) 
+                        self:click()
                     end
                 }
             }
             
-            buttonLarge.new = function(self) 
+            dropdownOption.new = function(self) 
                 
                 local new = setmetatable({}, self)
                 new.binds = {}
+                new.options = {}
                 
                 local instances = {}
                 instances.controlFrame = self.instances.controlFrame:Clone()
-                instances.backButton = instances.controlFrame['#back-button']
-                instances.button = instances.backButton['#button']
+                instances.clickSensor = instances.controlFrame['#click-sensor']
+                instances.button = instances.clickSensor['#button']
                 instances.label = instances.button['#label']
+                instances.icon = instances.button['#icon']
+                instances.menu = instances.controlFrame['#menu']
                 
                 for i, signals in pairs(self.signals) do 
                     local inst = instances[i]
@@ -4886,29 +5476,15 @@ do
             end
             
             
-            elemClasses.section.addButton = function(self, settings) 
+            elemClasses.dropdown.addDropdown = function(self, settings) 
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
                 
                 local s_title = settings.text or 'nil'
-                local s_style = settings.style or 'small'
-                if (typeof(s_style) == 'number') then
-                    if (s_style == 2) then
-                        s_style = 'large'
-                    else
-                        s_style = 'small'
-                    end
-                elseif (typeof(s_style) ~= 'string') then
-                    s_style = 'small'
-                end
+                local s_options = settings.options or {}
                 
-                local new
-                if (s_style == 'large') then
-                    new = elemClasses.buttonLarge:new()
-                else
-                    new = elemClasses.buttonSmall:new()
-                end
+                local new = dropdown:new()
                 new.section = self 
                 new.name = s_title
                 table.insert(self.controls, new)
@@ -4919,20 +5495,349 @@ do
             end
         end
         -- add class
-        elemClasses.buttonLarge = buttonLarge
+        elemClasses.dropdownOption = dropdownOption
+    end]]
+
+    -- Unfinished
+    -- DROPDOWN
+    --[[
+    do 
+        local dropdown = {} do 
+            dropdown.__index = dropdown 
+            setmetatable(dropdown, elemClasses.baseElement)
+            
+            dropdown.class = 'dropdown'
+            
+            do
+                local instances = {} do 
+                    local controlFrame = Instance.new('Frame')
+                    controlFrame.BackgroundTransparency = 1
+                    controlFrame.BackgroundColor3 = Color3.new(0, 1, 1)
+                    controlFrame.Name = '#control'
+                    controlFrame.Size = UDim2.new(1, 0, 0, 20)
+                    controlFrame.Visible = true
+                    controlFrame.ZIndex = 34
+                    
+                    instances.controlFrame = controlFrame
+                    
+                    local clickSensor = Instance.new('TextButton') do 
+                        clickSensor.BackgroundTransparency = 1
+                        clickSensor.Name = '#click-sensor'
+                        clickSensor.Size = UDim2.new(1, 0, 0, 20)
+                        clickSensor.Text = ''
+                        clickSensor.TextTransparency = 1
+                        clickSensor.ZIndex = 34
+                        
+                        clickSensor.Parent = controlFrame
+                        
+                        local button = Instance.new('Frame') do 
+                            button.Active = true
+                            button.AnchorPoint = Vector2.new(1, 0)
+                            button.BackgroundColor3 = theme.Button1
+                            button.Name = '#button'
+                            button.Position = UDim2.new(1, -3, 0, 2)
+                            button.Size = UDim2.new(1, -6, 0, 16)
+                            button.Visible = true
+                            button.ZIndex = 35
+                            
+                            button.Parent = clickSensor
+                            
+                            local round = Instance.new('UICorner') do 
+                                round.CornerRadius = UDim.new(0, rounding and 2 or 0)
+                                round.Name = '#round'
+                                
+                                round.Parent = button
+                            end
+                            
+                            local stroke = Instance.new('UIStroke') do 
+                                stroke.ApplyStrokeMode = 'Border'
+                                stroke.Color = theme.Stroke
+                                stroke.LineJoinMode = 'Round'
+                                stroke.Name = '#stroke'
+                                stroke.Thickness = 1 
+                                
+                                stroke.Parent = button
+                            end
+                            
+                            local label = Instance.new('TextLabel') do 
+                                label.BackgroundTransparency = 1
+                                label.Font = 'SourceSans'
+                                label.Name = '#label'
+                                label.RichText = true
+                                label.Size = UDim2.fromScale(1, 1)
+                                label.Text = 'button'
+                                label.TextColor3 = theme.TextPrimary
+                                label.TextSize = 14
+                                label.TextStrokeColor3 = theme.TextStroke
+                                label.TextStrokeTransparency = 0.8
+                                label.TextTransparency = 0
+                                label.TextWrapped = false
+                                label.TextXAlignment = 'Center'
+                                label.TextYAlignment = 'Center'
+                                label.Visible = true
+                                label.ZIndex = 35
+                                
+                                label.Parent = button
+                            end
+                            
+                            local icon = Instance.new('ImageLabel') do 
+                                icon.AnchorPoint = Vector2.new(1, 0)
+                                icon.BackgroundTransparency = 1
+                                icon.Image = 'rbxassetid://9801473013'
+                                icon.ImageColor3 = theme.Secondary
+                                icon.Name = '#icon'
+                                icon.Position = UDim2.fromScale(1, 0)
+                                icon.Rotation = 0
+                                icon.Size = UDim2.fromOffset(16, 16)
+                                icon.Visible = true
+                                icon.ZIndex = 35
+                                
+                                icon.Parent = button
+                                
+                                local gradient = Instance.new('UIGradient') do 
+                                    gradient.Color = ColorSequence.new(
+                                        theme.ControlGradient1,
+                                        theme.ControlGradient2
+                                    )
+                                    gradient.Rotation = 90
+                                    gradient.Enabled = true
+                                    gradient.Name = '#gradient'
+                                    
+                                    gradient.Parent = icon
+                                end
+                            end
+                        end
+                        
+                        
+                        local menu = Instance.new('ScrollingFrame') do 
+                            menu.BackgroundColor3 = theme.Window3
+                            menu.BorderSizePixel = 0
+                            menu.BottomImage = 'rbxassetid://9416839567'
+                            menu.ClipsDescendants = true
+                            menu.CanvasSize = UDim2.fromOffset(0, 0)
+                            menu.MidImage = 'rbxassetid://9416839567'
+                            menu.Name = '#menu'
+                            menu.Position = UDim2.fromOffset(3, 18)
+                            menu.ScrollBarImageTransparency = 0.9
+                            menu.ScrollBarThickness = 1
+                            menu.ScrollingDirection = 'Y'
+                            menu.ScrollingEnabled = true
+                            menu.Size = UDim2.new(1, -6, 0, 0)
+                            menu.TopImage = 'rbxassetid://9416839567'
+                            menu.ZIndex = 34
+                            
+                            menu.Parent = controlFrame
+                            
+                            local layout = Instance.new('UIListLayout') do 
+                                layout.Padding = UDim.new(0, 4)
+                                layout.Name = '#layout'
+                                layout.FillDirection = 'Vertical'
+                                layout.HorizontalAlignment = 'Center'
+                                layout.VerticalAlignment = 'Top'
+                                layout.SortOrder = 'LayoutOrder'
+                                
+                                layout.Parent = menu
+                            end
+                            
+                            local padding = Instance.new('UIPadding') do 
+                                padding.PaddingTop = UDim.new(0, 4)
+                                padding.Name = '#padding'
+                                padding.Parent = menu
+                            end
+                            
+                            local stroke = Instance.new('UIStroke') do 
+                                stroke.ApplyStrokeMode = 'Border'
+                                stroke.Color = theme.Stroke
+                                stroke.LineJoinMode = 'Round'
+                                stroke.Name = '#stroke'
+                                stroke.Thickness = 1 
+                                
+                                stroke.Parent = menu
+                            end
+                        end
+                    end
+                end
+                dropdown.instances = instances 
+            end
+            
+            dropdown.focused = false
+            dropdown.openState = false
+            
+            
+            dropdown.open = function(self) 
+                self.openState = true 
+                self:fireEvent('onOpen')
+                
+                
+                local frame = self.instances.button
+                if (self.focused) then
+                    tween(frame, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                else
+                    tween(frame, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                end
+                tween(self.instances.icon, {
+                    Rotation = 180,
+                    ImageColor3 = theme.Primary
+                }, 0.3, 1)
+                
+                
+                tween(self.instances.menu, {
+                    Size = UDim2.new(1, -6, 0, 68)
+                }, 0.2, 1)
+                tween(self.instances.controlFrame, {
+                    Size = UDim2.new(1, 0, 0, 68+20)
+                }, 0.2, 1)
+            end
+            dropdown.close = function(self) 
+                self.openState = false
+                self:fireEvent('onClose')
+                
+                local frame = self.instances.button
+                if (self.focused) then
+                    tween(frame, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                else
+                    tween(frame, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                end
+                tween(self.instances.icon, {
+                    Rotation = 0,
+                    ImageColor3 = theme.Secondary
+                }, 0.3, 1)
+                tween(self.instances.menu, {
+                    Size = UDim2.new(1, -6, 0, 0)
+                }, 0.2, 1)
+                tween(self.instances.controlFrame, {
+                    Size = UDim2.new(1, 0, 0, 20)
+                }, 0.2, 1)
+            end
+            
+            dropdown.isOpen = function(self) 
+                return self.openState 
+            end
+            
+            dropdown.setOptions = function(self, newOptions) 
+                for i, opt in ipairs(self.options) do 
+                    self:removeOption(opt)
+                end
+                for i, opt in ipairs(newOptions) do 
+                    self:addOption(opt)
+                end
+            end
+            dropdown.refresh = dropdown.setOptions
+            
+            dropdown.addOption = function(self) 
+            
+            end
+            
+            dropdown.removeOption = function(self) 
+            
+            end
+            
+            
+            
+            dropdown.click = function(self) 
+                self.openState = not self.openState
+                if (self.openState) then
+                    self:open()
+                else
+                    self:close()
+                end
+                
+                return self
+            end
+            dropdown.__hotkeyFunc = dropdown.click
+            
+            dropdown.signals = {
+                clickSensor = {
+                    MouseEnter = function(inst, self) 
+                        self.focused = true
+                        self:showTooltip()
+                        
+                        
+                        local frame = self.instances.button
+                        if (self.openState) then
+                            tween(frame, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                        else
+                            tween(frame, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        end
+                        tween(frame['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                    end,
+                    MouseLeave = function(inst, self) 
+                        self.focused = false
+                        self:hideTooltip()
+                        
+                        local frame = self.instances.button
+                        if (self.openState) then
+                            tween(frame, {BackgroundColor3 = theme.Button3}, 0.2, 1)
+                        else
+                            tween(frame, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        end
+                        tween(frame['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                    end,
+                    MouseButton1Click = function(inst, self) 
+                        self:click()
+                    end
+                }
+            }
+            
+            dropdown.new = function(self) 
+                
+                local new = setmetatable({}, self)
+                new.binds = {}
+                new.options = {}
+                
+                local instances = {}
+                instances.controlFrame = self.instances.controlFrame:Clone()
+                instances.clickSensor = instances.controlFrame['#click-sensor']
+                instances.button = instances.clickSensor['#button']
+                instances.label = instances.button['#label']
+                instances.icon = instances.button['#icon']
+                instances.menu = instances.controlFrame['#menu']
+                
+                for i, signals in pairs(self.signals) do 
+                    local inst = instances[i]
+                    for signal, func in pairs(signals) do
+                        local h = inst[signal]:Connect(function() 
+                            func(inst, new)
+                        end)
+                    end
+                end
+                
+                new.instances = instances
+                return new
+            end
+            
+            
+            elemClasses.section.addDropdown = function(self, settings) 
+                if (not typeof(settings) == 'table') then
+                    return error('expected type table for settings', 2) 
+                end
+                
+                local s_title = settings.text or 'nil'
+                local s_options = settings.options or {}
+                
+                local new = dropdown:new()
+                new.section = self 
+                new.name = s_title
+                table.insert(self.controls, new)
+                
+                new.instances.label.Text = s_title
+                new.instances.controlFrame.Parent = self.instances.controlMenu
+                return new
+            end
+        end
+        -- add class
+        elemClasses.dropdown = dropdown
     end    
     ]]
-    
-    -- SEARCH DROPDOWN
-    
-    -- MULTI DROPDOWN
-    
+
     -- SLIDER
     do 
         
         local slider = {} do 
             slider.__index = slider 
             setmetatable(slider, elemClasses.baseElement)
+            
+            slider.class = 'slider'
             
             do
                 local instances = {} do 
@@ -4975,6 +5880,7 @@ do
                             sliderFill.Active = false
                             sliderFill.BackgroundColor3 = theme.Primary
                             sliderFill.BackgroundTransparency = 0.6
+                            sliderFill.BorderSizePixel = 0
                             sliderFill.Name = '#slider-fill'
                             sliderFill.Size = UDim2.fromScale(1, 1)
                             sliderFill.Visible = true
@@ -5010,7 +5916,7 @@ do
                             inputBox.ClipsDescendants = true
                             inputBox.Font = 'SourceSans'
                             inputBox.Name = '#input-box'
-                            inputBox.PlaceholderColor3 = Color3.fromRGB(128, 128, 128)
+                            inputBox.PlaceholderColor3 = theme.TextDim
                             inputBox.PlaceholderText = 'enter value'
                             inputBox.Size = UDim2.fromScale(1, 1)
                             inputBox.Text = 'enter value'
@@ -5109,14 +6015,16 @@ do
             slider.signals = {
                 container = {
                     MouseEnter = function(inst, win) 
-                        tween(inst, {BackgroundColor3 = theme.Button2}, 0.1, 1)
-                        
                         win:showTooltip()
+                        
+                        tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, win) 
-                        tween(inst, {BackgroundColor3 = theme.Button1}, 0.1, 1)
-                        
                         win:hideTooltip()
+                        
+                        tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end
                 }
             }
@@ -5230,7 +6138,7 @@ do
                             dcon:Disconnect()
                             acon:Disconnect()
                             
-                            tween(fill, {Size = targetSize}, 0.1, 1)
+                            tween(fill, {Size = targetSize}, 0.2, 1)
                         end
                     end)
                 end
@@ -5254,7 +6162,7 @@ do
                 self.instances.value.Text = self.format:format(roundedValue)
             end
             
-            elemClasses.section.addSlider = function(self, settings) 
+            elemClasses.section.addSlider = function(self, settings, callback) 
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
@@ -5300,16 +6208,20 @@ do
                     end
                 end
                 
-                table.insert(self.controls, slider)
                 
+                table.insert(self.controls, slider)
                 
                 slider:setValue(s_value) 
                 slider.instances.label.Text = s_title
                 slider.instances.controlFrame.Parent = self.instances.controlMenu
+                
+                if (typeof(callback) == 'function') then
+                    slider:bindToEvent('onNewValue', callback)
+                end
                 return slider
             end
         end
-
+        
         elemClasses.slider = slider
     end
     
@@ -5319,6 +6231,8 @@ do
         local picker = {} do 
             picker.__index = picker 
             setmetatable(picker, elemClasses.baseElement)
+            
+            picker.class = 'picker'
             
             do
                 local instances = {} do 
@@ -5448,7 +6362,15 @@ do
             
             picker.openPrompt = function(self) 
                 local window = elemClasses.pickerWindow:new()
-                window:setPosition(inputService:GetMouseLocation())
+                local mouseLoc = inputService:GetMouseLocation()
+                local screenSize = guiService:GetScreenResolution()
+                
+                local new = Vector2.new(
+                    math.clamp(mouseLoc.X, 50, screenSize.X - 350),
+                    math.clamp(mouseLoc.Y, 50, screenSize.Y - 350)
+                )
+                
+                window:setPosition(new)--inputService:GetMouseLocation())
                 window.hue = self.hue
                 window.sat = self.sat
                 window.val = self.val
@@ -5484,6 +6406,7 @@ do
                             self.hue = hue 
                             self.color = Color3.fromHSV(hue, self.sat, self.val)
                             self.instances.display.BackgroundColor3 = self.color
+                            self:fireEvent('onNewColor', self.color)
                         end)
                     end
                 end)
@@ -5610,14 +6533,18 @@ do
                     MouseEnter = function(inst, picker) 
                         picker.focused = true
                         picker:showTooltip()
-
-                        tween(picker.instances.picker, {BackgroundColor3 = theme.Button2}, 0.1, 1)
+                        
+                        local inst = picker.instances.picker
+                        tween(inst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
                     end,
                     MouseLeave = function(inst, picker) 
                         picker.focused = false
                         picker:hideTooltip()
                         
-                        tween(picker.instances.picker, {BackgroundColor3 = theme.Button1}, 0.1, 1)
+                        local inst = picker.instances.picker
+                        tween(inst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        tween(inst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
                     end,
                     MouseButton1Click = function(inst, picker) 
                         picker:click()
@@ -5650,7 +6577,7 @@ do
                 return new
             end
 
-            elemClasses.section.addColorPicker = function(self, settings) 
+            elemClasses.section.addColorPicker = function(self, settings, callback) 
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
@@ -5667,6 +6594,11 @@ do
                 picker:setColor(s_color)
                 
                 picker.instances.controlFrame.Parent = self.instances.controlMenu
+                
+                
+                if (typeof(callback) == 'function') then
+                    picker:bindToEvent('onNewColor', callback) 
+                end
                 return picker
             end
         end
@@ -5674,13 +6606,447 @@ do
         elemClasses.picker = picker
     end
     
-    -- INPUTS
+    -- TEXTBOX
+    do 
+        
+        local textbox = {} do 
+            textbox.__index = textbox 
+            setmetatable(textbox, elemClasses.baseElement)
+            
+            textbox.class = 'textbox'
+            
+            do
+                local instances = {} do 
+                    local controlFrame = Instance.new('Frame')
+                    controlFrame.BackgroundTransparency = 1
+                    controlFrame.BackgroundColor3 = Color3.new(1, 0, 1)
+                    controlFrame.Name = '#control'
+                    controlFrame.Size = UDim2.new(1, 0, 0, 20)
+                    controlFrame.Visible = true
+                    controlFrame.ZIndex = 34
+                    
+                    instances.controlFrame = controlFrame
+                    
+                    local inputBox = Instance.new('TextBox') do 
+                        inputBox.Active = true 
+                        inputBox.BackgroundColor3 = theme.Window1
+                        inputBox.BackgroundTransparency = 0
+                        inputBox.ClearTextOnFocus = true
+                        inputBox.ClipsDescendants = true
+                        inputBox.Font = 'SourceSans'
+                        inputBox.Name = '#textbox'
+                        inputBox.PlaceholderColor3 = theme.TextDim
+                        inputBox.PlaceholderText = '...'
+                        inputBox.Position = UDim2.fromOffset(3, 2)
+                        inputBox.Size = UDim2.new(1, -6, 0, 16)
+                        inputBox.Text = 'textbox'
+                        inputBox.TextColor3 = theme.TextPrimary
+                        inputBox.TextSize = 14
+                        inputBox.TextStrokeColor3 = theme.TextStroke
+                        inputBox.TextStrokeTransparency = 0.8
+                        inputBox.TextWrapped = false
+                        inputBox.TextXAlignment = 'Left'
+                        inputBox.TextYAlignment = 'Center'
+                        inputBox.Visible = true
+                        inputBox.ZIndex = 35
+                        
+                        inputBox.Parent = controlFrame
+                        
+                        local round = Instance.new('UICorner') do 
+                            round.CornerRadius = UDim.new(0, rounding and 2 or 0)
+                            round.Name = '#round'
+                            
+                            round.Parent = inputBox
+                        end
+                    
+                        local stroke = Instance.new('UIStroke') do 
+                            stroke.ApplyStrokeMode = 'Border'
+                            stroke.Color = theme.Stroke
+                            stroke.LineJoinMode = 'Round'
+                            stroke.Name = '#stroke'
+                            stroke.Thickness = 1 
+                            
+                            stroke.Parent = inputBox
+                        end
+                        
+                        local padding = Instance.new('UIPadding') do 
+                            padding.Name = '#padding'
+                            padding.PaddingLeft = UDim.new(0, 4)
+                            
+                            padding.Parent = inputBox
+                        end
+                        --[[ nope :money_mouth:
+                        
+                        local autoFill = Instance.new('TextLabel') do 
+                            autoFill.BackgroundTransparency = 1
+                            autoFill.Font = 'SourceSans'
+                            autoFill.Name = '#autofill'
+                            autoFill.Size = UDim2.fromScale(1, 1)
+                            autoFill.Text = 'autofill'
+                            autoFill.TextColor3 = theme.TextDim
+                            autoFill.TextSize = 14
+                            autoFill.TextTransparency = 0.3
+                            autoFill.TextStrokeColor3 = theme.TextStroke
+                            autoFill.TextStrokeTransparency = 0.8
+                            autoFill.TextWrapped = false
+                            autoFill.TextXAlignment = 'Left'
+                            autoFill.TextYAlignment = 'Center'
+                            autoFill.Visible = true
+                            autoFill.ZIndex = 35 
+                            
+                            autoFill.Parent = inputBox
+                        end]]
+                    end
+                end
+                textbox.instances = instances 
+            end
+            
+            textbox.hovering = false
+            textbox.focused = false
+            
+            textbox.signals = {
+                controlFrame = {
+                    MouseEnter = function(inst, obj) 
+                        obj.hovering = true
+                        obj:showTooltip()
+                        
+                        local boxInst = obj.instances.textBox
+                        if (obj.focused) then
+                            tween(boxInst, {BackgroundColor3 = theme.Button4}, 0.2, 1)
+                        else
+                            tween(boxInst, {BackgroundColor3 = theme.Button2}, 0.2, 1)
+                        end
+                        tween(boxInst['#stroke'], {Color = theme.StrokeHover}, 0.2, 1)
+                    end,
+                    MouseLeave = function(inst, obj) 
+                        obj.hovering = false
+                        obj:hideTooltip()
+                        
+                        
+                        local boxInst = obj.instances.textBox
+                        if (obj.focused) then
+                            tween(boxInst, {BackgroundColor3 = theme.Button3}, 0.2, 1)
+                        else
+                            tween(boxInst, {BackgroundColor3 = theme.Button1}, 0.2, 1)
+                        end
+                        tween(boxInst['#stroke'], {Color = theme.Stroke}, 0.2, 1)
+                    end,
+                },
+                textBox = {
+                    Focused = function(inst, obj) 
+                        obj.focused = true
+                        --obj:showHint()
+                        obj.textUpdCn = inst:GetPropertyChangedSignal('Text'):Connect(function() 
+                            obj:fireEvent('onTextChange', inst.Text)
+                            obj:fireEvent('__txtUpdInternal', inst.Text)
+                        end)
+                        
+                        if (obj.hovering) then
+                            tween(inst, {BackgroundColor3 = theme.Button4, TextColor3 = theme.Primary}, 0.2, 1)
+                        else
+                            tween(inst, {BackgroundColor3 = theme.Button3, TextColor3 = theme.Primary}, 0.2, 1)
+                        end
+                        
+                        obj:fireEvent('onFocus')
+                    end,
+                    FocusLost = function(inst, obj) 
+                        obj.focused = false
+                        --obj:hideHint()
+                        if (obj.textUpdCn) then 
+                            obj.textUpdCn:Disconnect()
+                        end
+                        
+                        if (obj.hovering) then
+                            tween(inst, {BackgroundColor3 = theme.Button2, TextColor3 = theme.TextPrimary}, 0.2, 1)
+                        else
+                            tween(inst, {BackgroundColor3 = theme.Button1, TextColor3 = theme.TextPrimary}, 0.2, 1)
+                        end
+                        
+                        
+                        local inputText = inst.Text
+                        inst.Text = obj.name
+                        
+                        obj:fireEvent('onFocusLost', inputText)
+                    end,
+                    
+                }
+            }
+            
+            textbox.getText = function(self) 
+                return self.instances.textBox.Text
+            end
+            textbox.setText = function(self, newText) 
+                self.instances.textBox.Text = tostring(newText)
+                obj:fireEvent('onTextChange', newText)
+            end
+            
+            
+            -- hints temporarily disabled
+            --[[
+            textbox.setHints = function(self, hintArray) 
+                local hintTable = hint.hints
+                local hintTemplate = hint.instances.hintTemplate
+                
+                for _, hint in ipairs(hintTable) do 
+                    hint[2]:Destroy()
+                end
+                table.clear(hint.hints)
+
+                for _, suggestion in ipairs(hintArray) do 
+                    suggestion = tostring(suggestion)
+                    local thisHint = hintTemplate:Clone()
+                    
+                    thisHint.Name = suggestion:lower()
+                    thisHint.Text = suggestion
+                    thisHint.Visible = true
+                    thisHint.Parent = hintTemplate.Parent
+                    
+                    table.insert(hintTable, {
+                        suggestion,
+                        thisHint
+                    })
+                end
+                
+                table.sort(hintTable, function(hint1, hint2) 
+                    return hint1[1]:lower() < hint2[1]:lower()
+                end)
+                
+                hint.hintCount = #hintTable
+                
+                hint.selection = math.min(hint.selection, hint.hintCount)
+                tween(hint.instances.optionHighlight, {Position = UDim2.fromOffset(0, ((hint.selection - 1) % 6) * 16)}, 0.2, 1)
+                                
+                hint.instances.main.Size = UDim2.fromOffset(self.instances.textBox.AbsoluteSize.X, math.min((hint.hintCount * 16) + 4, (16*6)+4))
+                return self
+            end
+            textbox.showHint = function(self) 
+                if (hint.handle == nil) then 
+                    hint.showing = true
+                    hint.handle = self
+                    
+                    -- localize some instances that are used a ton
+                    local textBox = self.instances.textBox
+                    local hintRoot = hint.instances.main
+                    local hintHighlight = hint.instances.optionHighlight
+                    local hintMenu = hintRoot['#menu']['#container']
+                    
+                    -- position and display hint
+                    do 
+                        local controlFrame = self.instances.controlFrame
+                        
+                        hintRoot.Size = UDim2.fromOffset(textBox.AbsoluteSize.X, math.min((hint.hintCount * 16) + 4, (16*60)+4))
+
+                        local newPos = controlFrame.AbsolutePosition + Vector2.new(4, 26)
+                        hintRoot.Position = UDim2.fromOffset(newPos.X, newPos.Y)
+
+                        hintRoot.Visible = true
+                    end
+                    
+                    -- function to update suggestions
+                    local function update(tx) 
+                        local match = '^' .. tx
+                        local i = 0 
+                        
+                        -- go through hints
+                        -- if it doesnt start with the text then hide it
+                        -- otherwise show it and increase visible hint counter
+                        for _, hint in ipairs(hint.hints) do 
+                            local inst = hint[2]
+                            if (inst.Text:match(match)) then 
+                                inst.Visible = true
+                                i += 1
+                            else
+                                inst.Visible = false
+                            end
+                        end
+                        
+                        
+                        if (i == 0) then
+                            -- no possible selections
+                            hintRoot.Visible = false -- hide the hint frame
+                            hint.selection = 1 -- reset selection to top
+                        else
+                            -- there are a few selections
+                            hintRoot.Visible = true
+                            hint.selection = math.clamp(hint.selection, 1, i)
+                        end
+                        
+                        -- move highlight to selection
+                        do
+                            local fixedPos = hint.selection - 1 -- start selection at 0 instead of 1 like arrays
+                            tween(hintHighlight, {Position = UDim2.fromOffset(0, fixedPos * 16)}, 0.2, 1)
+                        end
+                        -- set size
+                        do
+                            local maxHeight = (6 * 16) + 4 -- normally (5*16)+4
+                            local thisHeight = (i * 16) + 4 -- ( i (amount of hints) * 16 (hint size) ) + 4 (padding)
+                            hintRoot.Size = UDim2.fromOffset(textBox.AbsoluteSize.X, math.min(thisHeight, maxHeight)) -- limit size to max height
+                        end
+                        
+                        hint.hintCount = i
+                    end
+                    
+                    
+                    -- first update
+                    update(textBox.Text)
+                    
+                    
+                    -- fix issues with typing and filtering while showing stuff, then work on adding paginations (or just not doing it at all lol)
+                    
+                    
+                    -- do suggestion updates on text update
+                    self:bindToEvent('__txtUpdInternal', update)
+                    
+                    -- handle menu inputs
+                    hint.inputCn = inputService.InputBegan:Connect(function(io) 
+                        local kc = io.KeyCode
+                        if (kc.Name == 'Tab') then
+                            -- this is a lil scuffed but i dont want to have to rewrite even more shit
+                            -- just so this is a tiny bit better
+                            local i = 0 
+                            local finalHint
+                            
+                            -- go through all hints
+                            -- if one is valid increase index count
+                            -- if selection is index then set it
+                            
+                            for idx, h in ipairs(hint.hints) do 
+                                if (h[2].Visible) then
+                                    i = i + 1
+                                    if (i == hint.selection) then
+                                        finalHint = h[1]
+                                    end
+                                end
+                            end
+                            
+                            if (finalHint) then 
+                                -- set text, release textbox finishing everything
+                                textBox.Text = finalHint
+                                textBox:ReleaseFocus()
+                            end
+                            
+                        elseif (kc.Name == 'Up') then
+                            -- if up then move cursor up
+                            
+                            -- remove 1 from selection, and clamp that to 0
+                            hint.selection = math.min(hint.selection - 1, 0)
+                            
+                            -- take fixed selection to get the cursor index, and mod so it can paginate
+                            local cursorIndex = ((hint.selection - 1) % 6)
+                            -- multiply cursorIndex by 16 to get the real Y position
+                            tween(hintHighlight, {Position = UDim2.fromOffset(0, cursorIndex * 16)}, 0.2, 1)
+                            
+                            ui.notify({
+                                message = hint.selection .. ', ' .. cursorIndex
+                            })
+                            if (cursorIndex == 5 and hint.selection > 1) then
+                                local canvasPos = hintMenu.CanvasPosition
+                                tween(hintMenu, {CanvasPosition = canvasPos - Vector2.new(0, 16 * 6)}, 0.2, 1) -- add 1 menu size
+                                
+                                -- work on pagination
+                                -- make sure that the menu scrolls as the tab goes
+                            end
+                        elseif (kc.Name == 'Down') then
+                            -- if down then move cursor down
+                            
+                            -- add 1 to selection, and clamp that to the hint count
+                            hint.selection = math.min(hint.selection + 1, hint.hintCount)
+                            
+                            -- take fixed selection to get the cursor index, and mod so it can paginate
+                            local cursorIndex = ((hint.selection - 1) % 6)
+                            -- multiply cursorIndex by 16 to get the real Y position
+                            tween(hintHighlight, {Position = UDim2.fromOffset(0, cursorIndex * 16)}, 0.2, 1)
+                            
+                            
+                            
+                            if (cursorIndex == 0) then
+                                local canvasPos = hintMenu.CanvasPosition
+                                tween(hintMenu, {CanvasPosition = canvasPos + Vector2.new(0, 16 * 6)}, 0.2, 1) -- add 1 menu size
+                                
+                                -- work on pagination
+                                -- make sure that the menu scrolls as the tab goes
+                            end
+                            
+                            
+                            --hint.selection = math.min(hint.selection + 1, math.min(hint.hintCount, 5))
+                            --tween(hintHighlight, {Position = UDim2.fromOffset(0, (hint.selection-1) * 16)}, 0.2, 1)
+                        end
+                    end)
+                    
+                    -- set selection to 1 :money:
+                    hint.selection = 1 
+                end
+                return self
+            end
+            textbox.hideHint = function(self) 
+                if (hint.handle == self) then 
+                    hint.showing = false
+                    hint.handle = nil
+                    
+                    hint.inputCn:Disconnect()
+                    self:bindToEvent('__txtUpdInternal', nil)
+                    
+                    hint.instances.main.Visible = false
+                end
+                return self
+            end]]
+            
+            textbox.new = function(self) 
+                
+                local new = setmetatable({}, self)
+                new.binds = {}
+                
+                local instances = {}
+                instances.controlFrame = self.instances.controlFrame:Clone()
+                instances.textBox = instances.controlFrame['#textbox']
+                
+                for i, signals in pairs(self.signals) do 
+                    local inst = instances[i]
+                    for signal, func in pairs(signals) do
+                        local h = inst[signal]:Connect(function(...) 
+                            func(inst, new, ...)
+                        end)
+                    end
+                end
+                
+                new.instances = instances
+                return new
+            end
+            
+            
+            elemClasses.section.addTextbox = function(self, settings, callback) 
+                if (not typeof(settings) == 'table') then
+                    return error('expected type table for settings', 2) 
+                end
+                
+                local s_title = settings.text or 'nil'
+                
+                local new = textbox:new()
+
+                new.section = self 
+                new.name = s_title
+                table.insert(self.controls, new)
+                
+                new.instances.textBox.Text = s_title
+                new.instances.controlFrame.Parent = self.instances.controlMenu
+                
+                if (typeof(callback) == 'function') then
+                    new:bindToEvent('onTextChange', callback)
+                end
+                return new
+            end
+        end
+        -- add class
+        elemClasses.textbox = textbox
+    end    
     
     -- NOTIF
     do 
         local notif = {} do 
             notif.__index = notif
             setmetatable(notif, elemClasses.baseElement) 
+            
+            notif.class = 'notif'
             
             do 
                 local instances = {} do                     
@@ -5820,7 +7186,7 @@ do
                         local title = Instance.new('TextLabel') do 
                             title.BackgroundTransparency = 1
                             title.BorderSizePixel = 0
-                            title.Font = 'RobotoCondensed'
+                            title.Font = 'SourceSans'
                             title.Name = '#title'
                             title.Position = UDim2.fromOffset(24, 0)
                             title.RichText = true
@@ -5980,11 +7346,10 @@ do
                 
                 return self 
             end
-            notif.new = function(self, resize) 
+            notif.new = function(self) 
                 
                 local new = setmetatable({}, self)
                 new.binds = {}
-                table.insert(ui.pickerWindows, new)
                 
                 local instances = {}
                 instances.main = self.instances.main:Clone()
@@ -5999,15 +7364,14 @@ do
         end
         elemClasses.notif = notif
     end
-    
-    -- MESSAGE BOX
-    
-    
+        
     -- HOTKEY
     do 
         local hotkey = {} do 
             hotkey.__index = hotkey
             setmetatable(hotkey, elemClasses.baseElement)
+            
+            hotkey.class = 'hotkey'
             
             do
                 local instances = {} do 
@@ -6067,7 +7431,7 @@ do
                             hotkey.Position = UDim2.new(1, -3, 0, 2)
                             hotkey.Size = UDim2.fromOffset(16, 16)
                             hotkey.Text = '[None]'
-                            hotkey.TextColor3 = Color3.fromRGB(192, 192, 192)
+                            hotkey.TextColor3 = theme.TextDim
                             hotkey.TextScaled = false
                             hotkey.TextSize = 14
                             hotkey.TextStrokeColor3 = theme.TextStroke
@@ -6102,14 +7466,24 @@ do
                         display.Text = '[None]'
                         self.inputCon:Disconnect()
                         self.inputCon = nil 
-                        tween(display, {TextColor3 = theme.TextPrimary}, 0.3, 1)
+                        
+                        if (self.focused) then 
+                            tween(display, {TextColor3 = theme.TextPrimary}, 0.3, 1)
+                        else
+                            tween(display, {TextColor3 = theme.TextDim}, 0.3, 1)
+                        end
                     else 
                         self.hotkey = io.KeyCode
                         self.set = time()
                         display.Text = ('[%s]'):format(kc)
                         self.inputCon:Disconnect()
                         self.inputCon = nil 
-                        tween(display, {TextColor3 = theme.TextPrimary}, 0.3, 1)
+                        
+                        if (self.focused) then 
+                            tween(display, {TextColor3 = theme.TextPrimary}, 0.3, 1)
+                        else
+                            tween(display, {TextColor3 = theme.TextDim}, 0.3, 1)
+                        end
                     end
                 end)
                 
@@ -6123,16 +7497,20 @@ do
                         self.focused = true
                         self:showTooltip()
 
-                        if (not self.inputCon) then 
-                            tween(self.instances.hotkey, {TextColor3 = theme.TextPrimary}, 0.1, 1)
-                        end                    
+                        if (self.inputCon) then 
+                            tween(self.instances.hotkey, {TextColor3 = theme.Primary}, 0.2, 1)
+                        else 
+                            tween(self.instances.hotkey, {TextColor3 = theme.TextPrimary}, 0.2, 1)
+                        end
                     end,
                     MouseLeave = function(inst, self) 
                         self.focused = false
                         self:hideTooltip()
                         
-                        if (not self.inputCon) then 
-                            tween(self.instances.hotkey, {TextColor3 = Color3.fromRGB(192, 192, 192)}, 0.1, 1)
+                        if (self.inputCon) then 
+                            tween(self.instances.hotkey, {TextColor3 = theme.Primary}, 0.2, 1)
+                        else
+                            tween(self.instances.hotkey, {TextColor3 = theme.TextDim}, 0.2, 1)
                         end
                     end,
                     MouseButton1Click = function(inst, self) 
@@ -6184,6 +7562,27 @@ do
                 return self
             end
             
+            hotkey.setHotkey = function(self, hotkey) 
+                if (hotkey) then 
+                    if (typeof(hotkey) == 'EnumItem') then
+                        if (hotkey.EnumType ~= Enum.KeyCode) then
+                            return error('expected EnumItem of EnumType KeyCode for hotkey', 2) 
+                        end
+                    else
+                        if (Enum.KeyCode[hotkey]) then
+                            hotkey = Enum.KeyCode[hotkey]
+                        else
+                            return error('expected valid Enum.KeyCode Name, or Enum.KeyCode EnumItem', 2)  
+                        end
+                    end
+                    
+                    self.hotkey = hotkey 
+                    self.instances.hotkey.Text = ('[%s]'):format(hotkey.Name)
+                else
+                    self.hotkey = nil
+                    self.instances.hotkey.Text = '[None]'
+                end
+            end
             hotkey.getHotkey = function(self) return self.hotkey end 
             
             elemClasses.section.addHotkey = function(self, settings) 
@@ -6223,17 +7622,21 @@ do
         end
         elemClasses.hotkey = hotkey
     end    
-    
 end
 
 do
     ui.__index = ui 
     setmetatable(ui, elemClasses.baseElement)
+    ui.class = 'ui'
+    
     ui.binds = {}
     ui.windows = {}
     ui.pickerWindows = {}
     ui.notifs = {}
     ui.hotkeys = {}
+    ui.scriptCns = {}
+    
+    ui.autoDisableToggles = true
     
     local windows = ui.windows
     local pickerWindows = ui.pickerWindows
@@ -6247,7 +7650,6 @@ do
         
         local s_title = settings.text or 'nil'
         local s_resize = settings.resize or false
-        local s_menuless = settings.menuless or false
         local s_position = settings.position
         if (not s_position) then
             s_position = defaultWinPos
@@ -6348,10 +7750,16 @@ do
         
         elemClasses = nil 
         tooltip.instances.main:Destroy()
+        hint.instances.main:Destroy()
+        
         
         ui:fireEvent('onDestroy')
+        
+        for _, v in pairs(ui.scriptCns) do v:Disconnect() end
     end
     
+    
+    -- unfinished
     ui.setTheme = function(newTheme) 
         if (typeof(theme) ~= 'table') then
             return error('expected type table for theme', 2)
@@ -6360,11 +7768,13 @@ do
         theme = newTheme 
         
     end
+    
+    
     do 
         
         ui.notify = function(settings, s2)
             if (settings == ui) then
-                return error('ui.notify is not a namecall function, call like \'ui.notify(settings)\' instead', 2) 
+                return error('ui.notify is not a namecall function', 2) 
             end
             
             -- handle settings
@@ -6420,24 +7830,19 @@ do
             if ((not gpe) and (io.UserInputType.Name == 'Keyboard')) then
                 local kc = io.KeyCode
                 
-                local hotkeysLen = #hotkeys
-                if (hotkeysLen > 0) then 
-                    for i = 1, hotkeysLen do 
-                        local hotkey = hotkeys[i]
-                        if (hotkey.hotkey == kc and hotkey.set ~= time()) then
-                            local linkedControl = hotkey.linkedControl
-                            if (linkedControl) then 
-                                task.spawn(linkedControl.__hotkeyFunc, linkedControl)
-                            end
+                for i = 1, #hotkeys do 
+                    local hotkey = hotkeys[i]
+                    if (hotkey.hotkey == kc and hotkey.set ~= time()) then
+                        local linkedControl = hotkey.linkedControl
+                        if (linkedControl) then 
+                            task.spawn(linkedControl.__hotkeyFunc, linkedControl)
                         end
-                    end 
-                end
+                    end
+                end 
             end
         end)
     end
 end
 
---[[
-ui.newWindow({text = 'window'}):addMenu({text = 'menu'}):addSection({text = 'section'}):addDropdown({text = 'dropdown'})
-]]
+
 return ui 
