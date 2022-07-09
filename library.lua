@@ -4319,9 +4319,7 @@ do
                     
                     tween(min, {
                         BackgroundColor3 = self.minFocused and theme.Button2 or theme.Button1
-                        --BackgroundColor3 = theme[self.minFocused and 'Button2' or 'Button1']
-                        --BackgroundColor3 = theme['Button' .. (self.minFocused and 2 or 1)]
-                    })
+                    }, 0.2, 1)
                     mf['#menu'].Visible = true
                     mf.AutomaticSize = 'Y'
                 end
