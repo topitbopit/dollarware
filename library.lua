@@ -5196,12 +5196,12 @@ do
             end
             
             label.setText = function(self, newText) 
-                instances.label.Text = tostring(newText)
+                self.instances.label.Text = tostring(newText)
                 return self
             end
             
             label.getText = function(self) 
-                return instances.label.Text
+                return self.instances.label.Text
             end
             
             elemClasses.section.addLabel = function(self, settings) 
