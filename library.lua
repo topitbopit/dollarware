@@ -844,6 +844,7 @@ do
                 end
                 -- title bar
                 local titleBar = Instance.new('Frame') do 
+                    titleBar.Active = true
                     titleBar.BackgroundColor3 = theme.Window1
                     titleBar.BackgroundTransparency = 0
                     titleBar.BorderColor3 = theme.Inset1
@@ -851,6 +852,7 @@ do
                     titleBar.BorderSizePixel = 1
                     titleBar.ClipsDescendants = true
                     titleBar.Name = '#title-bar'
+                    titleBar.Selectable = true
                     titleBar.Size = UDim2.new(1, 0, 0, 26)
                     titleBar.ZIndex = 50
                     
@@ -1764,6 +1766,7 @@ do
                 end
 
                 local titleBar = Instance.new('Frame') do 
+                    titleBar.Active = true
                     titleBar.BackgroundColor3 = theme.Window1
                     titleBar.BackgroundTransparency = 0
                     titleBar.BorderColor3 = theme.Inset1
@@ -1771,6 +1774,7 @@ do
                     titleBar.BorderSizePixel = 1
                     titleBar.ClipsDescendants = true
                     titleBar.Name = '#title-bar'
+                    titleBar.Selectable = true
                     titleBar.Size = UDim2.new(1, 0, 0, 26)
                     titleBar.ZIndex = 101
                     
