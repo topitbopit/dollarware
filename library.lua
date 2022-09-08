@@ -5,6 +5,7 @@
 -- some shit makes no sense but idc enough to fix it
 
 -- started on 5/18/22
+-- recently improved on 9/7/22
 
 local inputService = game:GetService('UserInputService')
 local renderService = game:GetService('RunService')
@@ -21,19 +22,19 @@ do
     local styles = {styleEnum.Exponential, styleEnum.Linear}
     
     
-    function tween(object, shit, duration, style) 
+    function tween(object, props, duration, style) 
         local tweenInfo = TweenInfo.new(duration, styles[style], direction)
-        local tween = tweenService:Create(object, tweenInfo, shit)
+        local tween = tweenService:Create(object, tweenInfo, props)
         tween:Play()
         return tween 
     end
 end
 
--- ui config shit
+-- ui config
 local args = {...}
 local theme
 local rounding
-local animSpeed = 1e-12
+local animSpeed = 30
 
 -- theme 
 do
@@ -44,7 +45,7 @@ do
         if (settings.smoothDragging == nil) then 
             settings.smoothDragging = true 
         end
-        animSpeed = settings.smoothDragging and 1e-12 or 0
+        animSpeed = settings.smoothDragging and 10 or 0
         if (typeof(theme) == 'string') then
             if (theme == 'cherry') then          -- red
                 theme = {
@@ -725,7 +726,7 @@ do
                     
                     main.Visible = true
                     
-                    tooltip.update = renderService.RenderStepped:Connect(function() 
+                    tooltip.update = renderService.Heartbeat:Connect(function() 
                         local mpos = inputService:GetMouseLocation()
                         main.Position = UDim2.fromOffset(mpos.X,mpos.Y)
                     end)
@@ -757,7 +758,7 @@ do
             
             window.minimized = false -- is minimized
             window.size = UDim2.fromOffset(450, 350) -- current win size
-            window.icon = nil--'rbxassetid://9651932657'
+            window.icon = 'rbxassetid://10152328589'
             window.minFocused = false
             
             local instances = {} do 
@@ -844,7 +845,7 @@ do
                 end
                 -- title bar
                 local titleBar = Instance.new('Frame') do 
-                    titleBar.Active = true
+                    titleBar.Active = true 
                     titleBar.BackgroundColor3 = theme.Window1
                     titleBar.BackgroundTransparency = 0
                     titleBar.BorderColor3 = theme.Inset1
@@ -852,7 +853,6 @@ do
                     titleBar.BorderSizePixel = 1
                     titleBar.ClipsDescendants = true
                     titleBar.Name = '#title-bar'
-                    titleBar.Selectable = true
                     titleBar.Size = UDim2.new(1, 0, 0, 26)
                     titleBar.ZIndex = 50
                     
@@ -1004,11 +1004,11 @@ do
                     local icon = Instance.new('ImageLabel') do 
                         icon.BackgroundTransparency = 1
                         icon.BorderSizePixel = 0
-                        icon.Image = 'rbxassetid://10152328589'
                         icon.ImageColor3 = Color3.fromRGB(255, 255, 255)
                         icon.ImageTransparency = 0
                         icon.Name = '#icon'
-                        icon.Position = UDim2.fromOffset(2, 1)
+                        icon.Image = 'rbxassetid://10152328589'
+                        icon.Position = UDim2.fromOffset(2, 2)
                         icon.Size = UDim2.fromOffset(22, 22)
                         icon.Visible = true
                         icon.ZIndex = 51
@@ -1310,7 +1310,7 @@ do
                         
                         transparency = nil
                         scrollBarImageTransparency = nil
-                        animCon = renderService.RenderStepped:Connect(function(dt) 
+                        animCon = renderService.Heartbeat:Connect(function(dt) 
                             dt *= 8
                             for i= 1, #backgroundTransparency do 
                                 backgroundTransparency[i].BackgroundTransparency += dt
@@ -1330,7 +1330,7 @@ do
                 
                 table.remove(ui.windows, table.find(ui.windows, self))
                 if (#ui.windows == 0) then
-                    wait(0.3)
+                    task.wait(0.3)
                     ui.destroy(true) 
                 end
                 
@@ -1425,21 +1425,21 @@ do
                     local mainFrame = instances.mainFrame
                     local targetPos
                     
-                    titleBar.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Value == 0) then
+                    titleBar.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             local rootPos = mainFrame.AbsolutePosition
-                            local startPos = io.Position
+                            local startPos = input.Position
                             
                             startPos = Vector2.new(startPos.X, startPos.Y)
                             
                             targetPos = UDim2.fromOffset(rootPos.X, rootPos.Y)
-                            aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
+                            aCon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                mainFrame.Position = mainFrame.Position:Lerp(targetPos, 1 - math.exp(-animSpeed * deltaTime))
                             end)
-                            
-                            dCon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Value == 4) then
-                                    local curPos = io.Position
+
+                            dCon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
+                                    local curPos = input.Position
                                     curPos = Vector2.new(curPos.X, curPos.Y) 
                                     
                                     local dest = rootPos + (curPos - startPos)
@@ -1449,8 +1449,8 @@ do
                             
                         end
                     end)
-                    titleBar.InputEnded:Connect(function(io)
-                        if (io.UserInputType.Value == 0) then
+                    titleBar.InputEnded:Connect(function(input)
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
@@ -1467,22 +1467,22 @@ do
                     
                     local targetSize
                     
-                    resizeHandle.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Value == 0 and not new.minimized) then
+                    resizeHandle.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1' and not new.minimized) then
                             local rootSize = mainFrame.AbsoluteSize
-                            local startPos = io.Position
+                            local startPos = input.Position
                             
                             startPos = Vector2.new(startPos.X, startPos.Y)
                             
                             targetSize = UDim2.fromOffset(rootSize.X, rootSize.Y)
-                            aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Size = mainFrame.Size:lerp(targetSize, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
+                            aCon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                mainFrame.Size = mainFrame.Size:Lerp(targetSize, 1 - math.exp(-animSpeed * deltaTime))
                                 new.size = mainFrame.Size
                             end)
                             
-                            dCon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Value == 4) then
-                                    local curPos = io.Position
+                            dCon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
+                                    local curPos = input.Position
                                     curPos = Vector2.new(curPos.X, curPos.Y) 
                                     
                                     local dest = rootSize + (curPos - startPos)
@@ -1492,8 +1492,8 @@ do
                             
                         end
                     end)
-                    resizeHandle.InputEnded:Connect(function(io)
-                        if (io.UserInputType.Value == 0 and not new.minimized) then
+                    resizeHandle.InputEnded:Connect(function(input)
+                        if (input.UserInputType.Name == 'MouseButton1' and not new.minimized) then
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
@@ -1766,7 +1766,6 @@ do
                 end
 
                 local titleBar = Instance.new('Frame') do 
-                    titleBar.Active = true
                     titleBar.BackgroundColor3 = theme.Window1
                     titleBar.BackgroundTransparency = 0
                     titleBar.BorderColor3 = theme.Inset1
@@ -1774,7 +1773,6 @@ do
                     titleBar.BorderSizePixel = 1
                     titleBar.ClipsDescendants = true
                     titleBar.Name = '#title-bar'
-                    titleBar.Selectable = true
                     titleBar.Size = UDim2.new(1, 0, 0, 26)
                     titleBar.ZIndex = 101
                     
@@ -3124,7 +3122,7 @@ do
                         
                         transparency = nil
                         scrollBarImageTransparency = nil
-                        animCon = renderService.RenderStepped:Connect(function(dt) 
+                        animCon = renderService.Heartbeat:Connect(function(dt) 
                             dt *= 8
                             for i= 1, #backgroundTransparency do 
                                 backgroundTransparency[i].BackgroundTransparency += dt
@@ -3213,21 +3211,21 @@ do
                     local mainFrame = instances.main
                     local targetPos
                     
-                    titleBar.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Value == 0) then
+                    titleBar.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             local rootPos = mainFrame.AbsolutePosition
-                            local startPos = io.Position
+                            local startPos = input.Position
                             
                             startPos = Vector2.new(startPos.X, startPos.Y)
                             
                             targetPos = UDim2.fromOffset(rootPos.X, rootPos.Y)
-                            aCon = renderService.RenderStepped:Connect(function(dt) 
-                                mainFrame.Position = mainFrame.Position:lerp(targetPos, 1 - animSpeed^dt)-- 1 - 1e-12^dt)
+                            aCon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                mainFrame.Position = mainFrame.Position:Lerp(targetPos, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
-                            dCon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Value == 4) then
-                                    local curPos = io.Position
+                            dCon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
+                                    local curPos = input.Position
                                     curPos = Vector2.new(curPos.X, curPos.Y) 
                                     
                                     local dest = rootPos + (curPos - startPos)
@@ -3237,8 +3235,8 @@ do
                             
                         end
                     end)
-                    titleBar.InputEnded:Connect(function(io)
-                        if (io.UserInputType.Value == 0) then
+                    titleBar.InputEnded:Connect(function(input)
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dCon:Disconnect()
                             aCon:Disconnect()
                             
@@ -3259,7 +3257,7 @@ do
                     local dcon
                     local acon
                     
-                    inputbox.FocusLost:Connect(function(enter, io) 
+                    inputbox.FocusLost:Connect(function(enter, input) 
                         local tx = inputbox.Text
                         local n = tonumber(tx)
                         if (n) then
@@ -3279,20 +3277,20 @@ do
                             inputbox.Visible = false
                         else
                             inputbox.Text = 'not a valid number'
-                            wait(1)
+                            task.wait(1)
                             inputbox:CaptureFocus()
                         end
                     end)
                     
                     
                     local targetSize
-                    container.InputBegan:Connect(function(io) 
-                        local inputName = io.UserInputType.Name
+                    container.InputBegan:Connect(function(input) 
+                        local inputName = input.UserInputType.Name
                         if (inputName == 'MouseButton1') then
                             local containerPos = container.AbsolutePosition
                             local containerWidth = container.AbsoluteSize.X
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3306,15 +3304,15 @@ do
                             
                             new:displayRGB()
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                fill.Size = fill.Size:lerp(targetSize, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                fill.Size = fill.Size:Lerp(targetSize, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
                             --fill.Size = UDim2.fromScale(rawValue, 1)
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -3335,8 +3333,8 @@ do
                         end
                     end)
                     
-                    container.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -3357,7 +3355,7 @@ do
                     local dcon
                     local acon
                     
-                    inputbox.FocusLost:Connect(function(enter, io) 
+                    inputbox.FocusLost:Connect(function(enter, input) 
                         local tx = inputbox.Text
                         local n = tonumber(tx)
                         if (n) then
@@ -3377,19 +3375,19 @@ do
                             inputbox.Visible = false
                         else
                             inputbox.Text = 'not a valid number'
-                            wait(1)
+                            task.wait(1)
                             inputbox:CaptureFocus()
                         end
                     end)
                     
                     local targetSize
-                    container.InputBegan:Connect(function(io) 
-                        local inputName = io.UserInputType.Name
+                    container.InputBegan:Connect(function(input) 
+                        local inputName = input.UserInputType.Name
                         if (inputName == 'MouseButton1') then
                             local containerPos = container.AbsolutePosition
                             local containerWidth = container.AbsoluteSize.X
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3403,15 +3401,15 @@ do
                             
                             new:displayRGB()
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                fill.Size = fill.Size:lerp(targetSize, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                fill.Size = fill.Size:Lerp(targetSize, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
                             --fill.Size = UDim2.fromScale(rawValue, 1)
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -3432,8 +3430,8 @@ do
                         end
                     end)
                     
-                    container.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -3454,7 +3452,7 @@ do
                     local dcon
                     local acon
                     
-                    inputbox.FocusLost:Connect(function(enter, io) 
+                    inputbox.FocusLost:Connect(function(enter, input) 
                         local tx = inputbox.Text
                         local n = tonumber(tx)
                         if (n) then
@@ -3474,19 +3472,19 @@ do
                             inputbox.Visible = false
                         else
                             inputbox.Text = 'not a valid number'
-                            wait(1)
+                            task.wait(1)
                             inputbox:CaptureFocus()
                         end
                     end)
                     
                     local targetSize
-                    container.InputBegan:Connect(function(io) 
-                        local inputName = io.UserInputType.Name
+                    container.InputBegan:Connect(function(input) 
+                        local inputName = input.UserInputType.Name
                         if (inputName == 'MouseButton1') then
                             local containerPos = container.AbsolutePosition
                             local containerWidth = container.AbsoluteSize.X
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3500,15 +3498,15 @@ do
                             
                             new:displayRGB()
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                fill.Size = fill.Size:lerp(targetSize, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                fill.Size = fill.Size:Lerp(targetSize, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
                             --fill.Size = UDim2.fromScale(rawValue, 1)
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -3529,8 +3527,8 @@ do
                         end
                     end)
                     
-                    container.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -3549,12 +3547,12 @@ do
                     
                     
                     local targetPos
-                    container.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             local containerPos = container.AbsolutePosition
                             local containerWidth = container.AbsoluteSize.X
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3564,14 +3562,14 @@ do
                             new.val = rawValue
                             new:displayHSV()
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                cursor.Position = cursor.Position:lerp(targetPos, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                cursor.Position = cursor.Position:Lerp(targetPos, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -3585,8 +3583,8 @@ do
                         end
                     end)
                     
-                    container.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -3617,12 +3615,12 @@ do
                     
                     
                     local targetPos
-                    container.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             local containerPos = container.AbsolutePosition
                             local containerHeight = container.AbsoluteSize.Y
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3631,14 +3629,14 @@ do
                             
                             new.linkedPicker.chromaSpeed = 1 - rawValue
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                cursor.Position = cursor.Position:lerp(targetPos, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                cursor.Position = cursor.Position:Lerp(targetPos, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -3651,8 +3649,8 @@ do
                         end
                     end)
                     
-                    container.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    container.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -3685,15 +3683,15 @@ do
                     local oldRadius
                     local oldTheta
                     
-                    picker.InputBegan:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    picker.InputBegan:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             new.pickerMoving = true
                             local pickerPos = picker.AbsolutePosition
                             local pickerWidth = picker.AbsoluteSize.X
                             
 
                             local curInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 curInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -3721,18 +3719,18 @@ do
                             new:displayHSV()
                             
                             if (acon) then acon:Disconnect() end
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                cursor.Position = cursor.Position:lerp(targetPos, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                cursor.Position = cursor.Position:Lerp(targetPos, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
                             if (dcon) then dcon:Disconnect() end
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     
                                     
                                     do 
                                         local curInput do 
-                                            local position = io.Position
+                                            local position = input.Position
                                             curInput = Vector2.new(position.X, position.Y)
                                         end
                                         
@@ -3764,8 +3762,8 @@ do
                         end
                     end)
                     
-                    picker.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    picker.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             new.pickerMoving = false
                             dcon:Disconnect()
                             acon:Disconnect()
@@ -3958,7 +3956,7 @@ do
             end
             menu.instances = instances 
             
-            menu.select = function(self) 
+            function menu:select()
                 for i, m in ipairs(self.window.menus) do 
                     tween(m.instances.menuFrame, {Position = UDim2.new(0, 1, m.id - self.id, 1)}, 0.5, 1)
                     if (m ~= self) then 
@@ -3985,7 +3983,7 @@ do
             -- add 30 for selection
             -- additions compound
             
-            menu.deselect = function(self) 
+            function menu:deselect()
                 self.selected = false
                 if (self.selectorFocused) then
                     tween(self.instances.pageSelector, {
@@ -4029,7 +4027,7 @@ do
                 }
             }
             
-            menu.new = function(self) 
+            function menu:new()
                 -- inherit some functions and stuff
                 local new = setmetatable({}, self)
                 new.sections = {}
@@ -4058,7 +4056,7 @@ do
                 return new
             end
             
-            elemClasses.window.addMenu = function(self, settings) 
+            function elemClasses.window:addMenu(settings)
                 if (not typeof(settings) == 'table') then
                     return error('expected table for settings', 2) 
                 end
@@ -4069,7 +4067,6 @@ do
                 menu.window = self
                 menu.name = s_text
                 table.insert(self.menus, menu)
-                
                 
                 menu.id = #self.menus
                 if (menu.id == 1) then
@@ -4085,14 +4082,13 @@ do
                 menuTab.Text = s_text
                 menuFrame.Position = UDim2.new(0, 1, menu.id - 1, 1)
                 
-                
                 menuTab.Parent = self.instances.tabMenu
                 menuFrame.Parent = self.instances.pageRegion
                 
                 return menu
             end
-            
         end
+        
         -- add the menu class
         elemClasses.menu = menu
     end
@@ -4323,7 +4319,9 @@ do
                     
                     tween(min, {
                         BackgroundColor3 = self.minFocused and theme.Button2 or theme.Button1
-                    }, 0.2, 1)
+                        --BackgroundColor3 = theme[self.minFocused and 'Button2' or 'Button1']
+                        --BackgroundColor3 = theme['Button' .. (self.minFocused and 2 or 1)]
+                    }, 0.3, 1)
                     mf['#menu'].Visible = true
                     mf.AutomaticSize = 'Y'
                 end
@@ -5106,7 +5104,7 @@ do
         end
         
         -- button finalization
-        elemClasses.section.addButton = function(self, settings, callback) 
+        function elemClasses.section:addButton(settings, callback)
             if (not typeof(settings) == 'table') then
                 return error('expected type table for settings', 2) 
             end
@@ -5200,12 +5198,12 @@ do
             end
             
             label.setText = function(self, newText) 
-                self.instances.label.Text = tostring(newText)
+                instances.label.Text = tostring(newText)
                 return self
             end
             
             label.getText = function(self) 
-                return self.instances.label.Text
+                return instances.label.Text
             end
             
             elemClasses.section.addLabel = function(self, settings) 
@@ -5502,7 +5500,7 @@ do
 
     -- Unfinished
     -- DROPDOWN
-    --[[
+
     do 
         local dropdown = {} do 
             dropdown.__index = dropdown 
@@ -5665,8 +5663,7 @@ do
             dropdown.focused = false
             dropdown.openState = false
             
-            
-            dropdown.open = function(self) 
+            function dropdown:open()
                 self.openState = true 
                 self:fireEvent('onOpen')
                 
@@ -5678,8 +5675,7 @@ do
                     tween(frame, {BackgroundColor3 = theme.Button2}, 0.2, 1)
                 end
                 tween(self.instances.icon, {
-                    Rotation = 180,
-                    ImageColor3 = theme.Primary
+                    Rotation = 180
                 }, 0.3, 1)
                 
                 
@@ -5690,7 +5686,7 @@ do
                     Size = UDim2.new(1, 0, 0, 68+20)
                 }, 0.2, 1)
             end
-            dropdown.close = function(self) 
+            function dropdown:close()
                 self.openState = false
                 self:fireEvent('onClose')
                 
@@ -5701,8 +5697,7 @@ do
                     tween(frame, {BackgroundColor3 = theme.Button1}, 0.2, 1)
                 end
                 tween(self.instances.icon, {
-                    Rotation = 0,
-                    ImageColor3 = theme.Secondary
+                    Rotation = 0
                 }, 0.3, 1)
                 tween(self.instances.menu, {
                     Size = UDim2.new(1, -6, 0, 0)
@@ -5830,7 +5825,7 @@ do
         -- add class
         elemClasses.dropdown = dropdown
     end    
-    ]]
+    
 
     -- SLIDER
     do 
@@ -6031,7 +6026,7 @@ do
                 }
             }
             
-            slider.new = function(self) 
+            function slider:new()
                 local new = setmetatable({}, self)
                 new.binds = {}
                 
@@ -6064,7 +6059,7 @@ do
                     
                     local targetSize
                     
-                    inputbox.FocusLost:Connect(function(enter, io) 
+                    inputbox.FocusLost:Connect(function(enter, input) 
                         local tx = inputbox.Text
                         local n = tonumber(tx)
                         if (n) then
@@ -6082,18 +6077,18 @@ do
                             inputbox.Visible = false
                         else
                             inputbox.Text = 'not a valid number'
-                            wait(1)
+                            task.wait(1)
                             inputbox:CaptureFocus()
                         end
                     end)
                     
-                    slider.InputBegan:Connect(function(io) 
-                        local inputName = io.UserInputType.Name
+                    slider.InputBegan:Connect(function(input) 
+                        local inputName = input.UserInputType.Name
                         if (inputName == 'MouseButton1') then
                             local sliderPos = slider.AbsolutePosition
                             local sliderWidth = slider.AbsoluteSize.X
                             local startInput do 
-                                local position = io.Position
+                                local position = input.Position
                                 startInput = Vector2.new(position.X, position.Y)
                             end
                             
@@ -6107,14 +6102,14 @@ do
                             new.value = roundedValue
                             new:fireEvent('onNewValue', roundedValue)
                             
-                            acon = renderService.RenderStepped:Connect(function(dt) 
-                                fill.Size = fill.Size:lerp(targetSize, 1 - 1e-12^dt)
+                            acon = renderService.Heartbeat:Connect(function(deltaTime) 
+                                fill.Size = fill.Size:Lerp(targetSize, 1 - math.exp(-animSpeed * deltaTime))
                             end)
                             
-                            dcon = inputService.InputChanged:Connect(function(io) 
-                                if (io.UserInputType.Name == 'MouseMovement') then
+                            dcon = inputService.InputChanged:Connect(function(input) 
+                                if (input.UserInputType.Name == 'MouseMovement') then
                                     local curInput do 
-                                        local position = io.Position
+                                        local position = input.Position
                                         curInput = Vector2.new(position.X, position.Y)
                                     end
                                     
@@ -6135,8 +6130,8 @@ do
                         end
                     end)
                     
-                    slider.InputEnded:Connect(function(io) 
-                        if (io.UserInputType.Name == 'MouseButton1') then
+                    slider.InputEnded:Connect(function(input) 
+                        if (input.UserInputType.Name == 'MouseButton1') then
                             dcon:Disconnect()
                             acon:Disconnect()
                             
@@ -6149,10 +6144,10 @@ do
                 return new
             end
             
-            slider.getValue = function(self) 
+            function slider:getValue() 
                 return self.value 
             end
-            slider.setValue = function(self, value) 
+            function slider:setValue(value)
                 self.value = value
                 self:fireEvent('onNewValue', value)
                 
@@ -6164,7 +6159,7 @@ do
                 self.instances.value.Text = self.format:format(roundedValue)
             end
             
-            elemClasses.section.addSlider = function(self, settings, callback) 
+            function elemClasses.section:addSlider(settings, callback)
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
@@ -6362,7 +6357,7 @@ do
             picker.focused = false
             picker.pickerWindow = nil
             
-            picker.openPrompt = function(self) 
+            function picker:openPrompt()
                 local window = elemClasses.pickerWindow:new()
                 local mouseLoc = inputService:GetMouseLocation()
                 local screenSize = guiService:GetScreenResolution()
@@ -6399,7 +6394,7 @@ do
                     
                     if (self.chroma) then
                         if (self.chromaCon) then self.chromaCon:Disconnect() end 
-                        self.chromaCon = renderService.RenderStepped:Connect(function(dt) 
+                        self.chromaCon = renderService.Heartbeat:Connect(function(dt) 
                             dt *= self.chromaSpeed
                             
                             local hue = self.hue
@@ -6417,7 +6412,7 @@ do
                     if (t) then
                         if (window.chromaCon) then window.chromaCon:Disconnect() end 
                         if (self.chromaCon) then self.chromaCon:Disconnect() end 
-                        window.chromaCon = renderService.RenderStepped:Connect(function(dt) 
+                        window.chromaCon = renderService.Heartbeat:Connect(function(dt) 
                             dt *= self.chromaSpeed
                             if (window.pickerMoving) then 
                                 return 
@@ -6486,7 +6481,7 @@ do
                 return window
             end
             
-            picker.click = function(self) 
+            function picker:click()
                 self:fireEvent('onClick')
                 
                 local picker = self.instances.picker
@@ -6506,17 +6501,17 @@ do
                     self.pickerWindow = self:openPrompt()
                 end
                 
-                return picker
+                return self
             end
             
             picker.__hotkeyFunc = picker.click 
             
-            picker.getColor = function(self) 
+            function picker:getColor()
                 return self.color
             end
             
-            picker.setColor = function(self, color) 
-                if (typeof(color) ~= 'Color3') then
+            function picker:setColor(color)
+                if ( typeof(color) ~= 'Color3' ) then
                     return error('expected Color3, got ' .. typeof(color), 2)
                 end
                 
@@ -6527,6 +6522,7 @@ do
                 self.val = v 
                 
                 self.instances.display.BackgroundColor3 = self.color
+                return self 
             end
             
             
@@ -6554,7 +6550,7 @@ do
                 }
             }
             
-            picker.new = function(self) 
+            function picker:new()
                 
                 local new = setmetatable({}, self)
                 new.binds = {}
@@ -6580,7 +6576,7 @@ do
             end
 
             elemClasses.section.addColorPicker = function(self, settings, callback) 
-                if (not typeof(settings) == 'table') then
+                if ( not typeof(settings) == 'table' ) then
                     return error('expected type table for settings', 2) 
                 end
                 
@@ -6598,7 +6594,7 @@ do
                 picker.instances.controlFrame.Parent = self.instances.controlMenu
                 
                 
-                if (typeof(callback) == 'function') then
+                if ( typeof(callback) == 'function' ) then
                     picker:bindToEvent('onNewColor', callback) 
                 end
                 return picker
@@ -6774,12 +6770,14 @@ do
                 }
             }
             
-            textbox.getText = function(self) 
+            function textbox:getText()
                 return self.instances.textBox.Text
             end
-            textbox.setText = function(self, newText) 
+            function textbox:setText(newText)
                 self.instances.textBox.Text = tostring(newText)
                 obj:fireEvent('onTextChange', newText)
+                
+                return self
             end
             
             
@@ -6900,8 +6898,8 @@ do
                     self:bindToEvent('__txtUpdInternal', update)
                     
                     -- handle menu inputs
-                    hint.inputCn = inputService.InputBegan:Connect(function(io) 
-                        local kc = io.KeyCode
+                    hint.inputCn = inputService.InputBegan:Connect(function(input) 
+                        local kc = input.KeyCode
                         if (kc.Name == 'Tab') then
                             -- this is a lil scuffed but i dont want to have to rewrite even more shit
                             -- just so this is a tiny bit better
@@ -6993,8 +6991,7 @@ do
                 return self
             end]]
             
-            textbox.new = function(self) 
-                
+            function textbox:new() 
                 local new = setmetatable({}, self)
                 new.binds = {}
                 
@@ -7015,9 +7012,8 @@ do
                 return new
             end
             
-            
-            elemClasses.section.addTextbox = function(self, settings, callback) 
-                if (not typeof(settings) == 'table') then
+            function elemClasses.section:addTextbox(settings, callback)
+                if ( not typeof(settings) == 'table' ) then
                     return error('expected type table for settings', 2) 
                 end
                 
@@ -7032,7 +7028,7 @@ do
                 new.instances.textBox.Text = s_title
                 new.instances.controlFrame.Parent = self.instances.controlMenu
                 
-                if (typeof(callback) == 'function') then
+                if ( typeof(callback) == 'function' ) then
                     new:bindToEvent('onTextChange', callback)
                 end
                 return new
@@ -7267,7 +7263,7 @@ do
                 notif.instances = instances 
             end
             
-            notif.destroy = function(self)                 
+            function notif:destroy()
                 local main = self.instances.main
                 task.spawn(function()
                     local animCon
@@ -7305,7 +7301,7 @@ do
                         
                         transparency = nil
                         scrollBarImageTransparency = nil
-                        animCon = renderService.RenderStepped:Connect(function(dt) 
+                        animCon = renderService.Heartbeat:Connect(function(dt) 
                             dt *= 8
                             for i= 1, #backgroundTransparency do 
                                 backgroundTransparency[i].BackgroundTransparency += dt
@@ -7325,11 +7321,11 @@ do
 
                 return self 
             end
-            notif.setTitle = function(self, title) 
+            function notif:setTitle(title)
                 self.instances.title.Text = tostring(title)
                 return self 
             end
-            notif.setDesc = function(self, text) 
+            function notif:setDesc(text)
                 local desc = self.instances.desc
                 local main = self.instances.main
                 
@@ -7348,7 +7344,7 @@ do
                 
                 return self 
             end
-            notif.new = function(self) 
+            function notif:new()
                 
                 local new = setmetatable({}, self)
                 new.binds = {}
@@ -7455,14 +7451,17 @@ do
             hotkey.hotkey = nil 
             hotkey.focused = false
             hotkey.inputCon = nil 
-            hotkey.click = function(self) 
-                if (self.inputCon) then return end 
+            
+            function hotkey:click() 
+                if ( self.inputCon ) then 
+                    return 
+                end 
                 
                 local display = self.instances.hotkey 
                 
                 tween(display, {TextColor3 = theme.Primary}, 0.3, 1)
-                self.inputCon = inputService.InputBegan:Connect(function(io, gpe) 
-                    local kc = io.KeyCode.Name
+                self.inputCon = inputService.InputBegan:Connect(function(input, gpe) 
+                    local kc = input.KeyCode.Name
                     if (kc == 'Unknown' or kc == 'Escape') then 
                         self.hotkey = nil
                         display.Text = '[None]'
@@ -7475,8 +7474,8 @@ do
                             tween(display, {TextColor3 = theme.TextDim}, 0.3, 1)
                         end
                     else 
-                        self.hotkey = io.KeyCode
-                        self.set = time()
+                        self.hotkey = input.KeyCode
+                        self.set = tick()
                         display.Text = ('[%s]'):format(kc)
                         self.inputCon:Disconnect()
                         self.inputCon = nil 
@@ -7499,7 +7498,7 @@ do
                         self.focused = true
                         self:showTooltip()
 
-                        if (self.inputCon) then 
+                        if ( self.inputCon ) then 
                             tween(self.instances.hotkey, {TextColor3 = theme.Primary}, 0.2, 1)
                         else 
                             tween(self.instances.hotkey, {TextColor3 = theme.TextPrimary}, 0.2, 1)
@@ -7509,7 +7508,7 @@ do
                         self.focused = false
                         self:hideTooltip()
                         
-                        if (self.inputCon) then 
+                        if ( self.inputCon ) then 
                             tween(self.instances.hotkey, {TextColor3 = theme.Primary}, 0.2, 1)
                         else
                             tween(self.instances.hotkey, {TextColor3 = theme.TextDim}, 0.2, 1)
@@ -7521,7 +7520,7 @@ do
                 }
             }
             
-            hotkey.new = function(self) 
+            function hotkey:new()
                 
                 local new = setmetatable({}, self)
                 new.binds = {}
@@ -7553,10 +7552,10 @@ do
                 return self:__hotkeyFunc()
             end]]
             
-            hotkey.linkToControl = function(self, control) 
-                if (control and control.__hotkeyFunc == nil) then
+            function hotkey:linkToControl(control)
+                if ( control and control.__hotkeyFunc == nil ) then
                     return error('couldn\'t find control function', 2)
-                elseif (not control) then 
+                elseif ( not control ) then 
                     control = nil 
                 end
                 
@@ -7564,14 +7563,14 @@ do
                 return self
             end
             
-            hotkey.setHotkey = function(self, hotkey) 
-                if (hotkey) then 
-                    if (typeof(hotkey) == 'EnumItem') then
+            function hotkey:setHotkey(hotkey)
+                if ( hotkey ) then 
+                    if ( typeof(hotkey) == 'EnumItem' ) then
                         if (hotkey.EnumType ~= Enum.KeyCode) then
                             return error('expected EnumItem of EnumType KeyCode for hotkey', 2) 
                         end
                     else
-                        if (Enum.KeyCode[hotkey]) then
+                        if ( Enum.KeyCode[hotkey] ) then
                             hotkey = Enum.KeyCode[hotkey]
                         else
                             return error('expected valid Enum.KeyCode Name, or Enum.KeyCode EnumItem', 2)  
@@ -7585,9 +7584,11 @@ do
                     self.instances.hotkey.Text = '[None]'
                 end
             end
-            hotkey.getHotkey = function(self) return self.hotkey end 
+            function hotkey:getHotkey() 
+                return self.hotkey
+            end
             
-            elemClasses.section.addHotkey = function(self, settings) 
+            function elemClasses.section:addHotkey(settings)
                 if (not typeof(settings) == 'table') then
                     return error('expected type table for settings', 2) 
                 end
@@ -7595,13 +7596,13 @@ do
                 local s_title = settings.text or 'nil'
                 local s_bind = settings.bind or nil
                 
-                if (s_bind) then 
-                    if (typeof(s_bind) == 'EnumItem') then
+                if ( s_bind ) then 
+                    if ( typeof(s_bind) == 'EnumItem' ) then
                         if (s_bind.EnumType ~= Enum.KeyCode) then
                             return error('expected EnumItem of EnumType KeyCode for settings.bind', 2) 
                         end
                     else
-                        if (Enum.KeyCode[s_bind]) then
+                        if ( Enum.KeyCode[s_bind] ) then
                             s_bind = Enum.KeyCode[s_bind]
                         else
                             return error('expected valid Enum.KeyCode Name, or Enum.KeyCode EnumItem', 2)  
@@ -7619,6 +7620,7 @@ do
                     hotkey:setBind(s_bind)
                 end
                 hotkey.instances.controlFrame.Parent = self.instances.controlMenu
+                
                 return hotkey
             end
         end
@@ -7644,11 +7646,10 @@ do
     local pickerWindows = ui.pickerWindows
     local notifs = ui.notifs
     
-    ui.newWindow = function(settings) 
+    function ui:newWindow(settings)
         if (typeof(settings) ~= 'table') then
             return error('expected type table for settings', 2)
         end
-        
         
         local s_title = settings.text or 'nil'
         local s_resize = settings.resize or false
@@ -7657,7 +7658,6 @@ do
             s_position = defaultWinPos
             defaultWinPos += UDim2.fromScale(0.02, 0.02)
         end
-        
         
         local window = elemClasses.window:new(s_resize)
         
@@ -7724,7 +7724,7 @@ do
     ui.destroy = function(noWindows)
         ui:fireEvent('onPreDestroy')
         
-        delay(0.4, function() 
+        task.delay(0.4, function() 
             uiScreen:Destroy()
             uiScreen = nil
         end)
@@ -7828,15 +7828,15 @@ do
     -- hotkey handler
     do 
         local hotkeys = ui.hotkeys
-        ui.hkCon = inputService.InputBegan:Connect(function(io, gpe) 
-            if ((not gpe) and (io.UserInputType.Name == 'Keyboard')) then
-                local kc = io.KeyCode
+        ui.hkCon = inputService.InputBegan:Connect(function(input, gpe) 
+            if ( ( not gpe ) and (input.UserInputType.Name == 'Keyboard') ) then
+                local kc = input.KeyCode
                 
                 for i = 1, #hotkeys do 
                     local hotkey = hotkeys[i]
-                    if (hotkey.hotkey == kc and hotkey.set ~= time()) then
+                    if ( hotkey.hotkey == kc and hotkey.set ~= tick() ) then
                         local linkedControl = hotkey.linkedControl
-                        if (linkedControl) then 
+                        if ( linkedControl ) then 
                             task.spawn(linkedControl.__hotkeyFunc, linkedControl)
                         end
                     end
@@ -7846,5 +7846,4 @@ do
     end
 end
 
-
-return ui 
+return ui
