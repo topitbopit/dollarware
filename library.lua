@@ -7646,7 +7646,7 @@ do
     local pickerWindows = ui.pickerWindows
     local notifs = ui.notifs
     
-    function ui:newWindow(settings)
+    function ui.newWindow(settings)
         if (typeof(settings) ~= 'table') then
             return error('expected type table for settings', 2)
         end
