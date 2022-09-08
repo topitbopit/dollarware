@@ -45,7 +45,7 @@ do
         if (settings.smoothDragging == nil) then 
             settings.smoothDragging = true 
         end
-        animSpeed = settings.smoothDragging and 10 or 0
+        animSpeed = settings.smoothDragging and 30 or 0
         if (typeof(theme) == 'string') then
             if (theme == 'cherry') then          -- red
                 theme = {
