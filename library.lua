@@ -301,7 +301,7 @@ local uiScreen = Instance.new('ScreenGui') do
     uiScreen.Name = str
     str = nil 
     
-    if ( typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil ) then
+    if (typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil) then
         syn.protect_gui(uiScreen)
     end
     
@@ -7472,7 +7472,7 @@ do
                         end
                     else 
                         self.hotkey = input.KeyCode
-                        self.set = tick()
+                        self.set = time()
                         display.Text = ('[%s]'):format(kc)
                         self.inputCon:Disconnect()
                         self.inputCon = nil 
@@ -7831,7 +7831,7 @@ do
                 
                 for i = 1, #hotkeys do 
                     local hotkey = hotkeys[i]
-                    if ( hotkey.hotkey == kc and hotkey.set ~= tick() ) then
+                    if ( hotkey.hotkey == kc and hotkey.set ~= time() ) then
                         local linkedControl = hotkey.linkedControl
                         if ( linkedControl ) then 
                             task.spawn(linkedControl.__hotkeyFunc, linkedControl)
