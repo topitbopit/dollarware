@@ -301,7 +301,7 @@ local uiScreen = Instance.new('ScreenGui') do
     uiScreen.Name = str
     str = nil 
     
-    if (typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function') then
+    if ( typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil ) then
         syn.protect_gui(uiScreen)
     end
     
