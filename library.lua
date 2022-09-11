@@ -302,7 +302,7 @@ local uiScreen = Instance.new('ScreenGui') do
     str = nil 
     
     if (typeof(syn) == 'table' and typeof(syn.protect_gui) == 'function' and gethui == nil) then
-        syn.protect_gui(uiScreen)
+        --syn.protect_gui(uiScreen)
     end
     
     uiScreen.Parent = game:GetService('CoreGui')
