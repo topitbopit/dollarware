@@ -6507,18 +6507,22 @@ do
                 return self.color
             end
             
+            picker.getValue = picker.getColor
+            
             function picker:setColor(color)
                 if ( typeof(color) ~= 'Color3' ) then
                     return error('expected Color3, got ' .. typeof(color), 2)
                 end
                 
                 self.color = color
+                
                 local h,s,v = color:ToHSV()
                 self.hue = h
                 self.sat = s
                 self.val = v 
                 
                 self.instances.display.BackgroundColor3 = self.color
+                self:fireEvent('onNewColor', color)
                 return self 
             end
             
@@ -6770,6 +6774,8 @@ do
             function textbox:getText()
                 return self.instances.textBox.Text
             end
+            
+            textbox.getValue = textbox.getText
             function textbox:setText(newText)
                 self.instances.textBox.Text = tostring(newText)
                 obj:fireEvent('onTextChange', newText)
