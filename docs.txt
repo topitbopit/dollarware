@@ -1,0 +1,102 @@
+Format:
+    class:function(argument: type) -> return; [func aliases]
+    
+    if the return is self, you can chain together functions
+    ex. 
+        toggle:enable():disable():enable():disable():setTooltip('this works!'):enable()
+        
+API:
+    UI
+        ui.newWindow(settings: table) -> window // this isn't a namecall, call exactly like ui.newWindow!!
+        ui.notify(settings: table) -> nil // sends a notification
+        ui.destroy(noWindows: boolean) -> nil // noWindows is used internally, if you want to destroy just call ui.destroy()
+        
+        -- events
+        !onPreDestroy (nil) // fired immediately once ui.destroy gets called - all of the ui resources, toggles, windows, etc. are still alive
+        !onDestroy (nil) // fired once everything is destroyed. Do not use this event if you are making a config system!
+
+    Windows
+        window:destroy() -> self
+        window:setTitle(newTitle: string) -> self 
+        window:setIcon(assetId: string) -> self
+        window:setPosition(newPosition: Vector2/UDim2) -> self 
+        window:setSize(newSize: Vector2/UDim2) -> self 
+        window:getPosition() -> UDim2
+        window:getSize() -> UDim2
+        window:minimize() -> self 
+        
+        window:addMenu(settings: table) -> menu
+        
+    Menus
+        menu:select() -> self
+        menu:deselect() -> self
+        
+        menu:addSection(settings: table) -> section 
+        
+    Sections
+        section:minimize() -> nil 
+        
+        section:addToggle(settings: table) -> toggle
+        section:addButton(settings: table) -> buttonLarge / buttonSmall
+        section:addLabel(settings: table) -> label
+        section:addColorPicker(settings: table) -> colorPicker
+        section:addTextbox(settings: table) -> textbox 
+                
+
+    Labels
+        label:getText() -> string
+        label:setText(text: string) -> nil
+        
+    Toggles
+        toggle:getState() -> boolean; [getValue, isEnabled]
+        toggle:disable() -> self
+        toggle:enable() -> self
+        toggle:toggle() -> self
+        toggle:setTooltip(tooltip: string) -> self 
+        
+        -- events 
+        !onEnable (nil)
+        !onDisable (nil)
+        !onToggle (state: boolean)
+    
+    Buttons
+        button:click() -> self 
+        button:setTooltip(tooltip: string) -> self 
+        
+        -- events
+        !onClick (nil)
+        
+    Sliders
+        slider:getValue() -> number
+        slider:setValue(newValue: number) -> nil 
+        slider:setTooltip(tooltip: string) -> self 
+        
+        -- events
+        !onNewValue (number)
+        
+    Color pickers
+        picker:getColor() -> Color3
+        picker:setColor(color: Color3) -> nil     
+        picker:openPrompt() -> pickerWindow // used internally 
+        picker:setTooltip(tooltip: string) -> self 
+        
+        
+        -- events
+        !onClick (nil) // used internally
+        !onNewColor (Color3)
+        
+    Textboxes
+        textbox:getText() -> string
+        textbox:setText(newText: string) -> nil
+        textbox:setTooltip(tooltip: string) -> self
+        
+        -- events
+        !onTextChange (text: string) // fires every single time the text changes (like when a new character is added)
+        !onFocusLost (text: string) // fires when the box is finished being typing in (like when enter is pressed)
+        
+        
+    Hotkey
+        hotkey:setHotkey(newHotkey: Enum.KeyCode/string) -> nil
+        hotkey:getHotkey() -> Enum.KeyCode
+        hotkey:linkToControl(control: toggle/button) -> self
+        hotkey:setTooltip(tooltip: string) -> self
